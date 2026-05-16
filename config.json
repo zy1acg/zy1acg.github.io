@@ -1,6 +1,13 @@
 {
-    "title":"Blog Title",
-    "subTitle":"Blog description",
-    "avatarUrl":"https://github.githubassets.com/favicons/favicon.svg",
+    "title":"Z's Blog",
+    "subTitle":"Log fun things",
+    "avatarUrl":"https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg",
+    "i18n":"CN",
+    "UTC":8,
+    "themeMode":"manual",
+    "dayTheme":"light",
+    "nightTheme":"dark_colorblind",
+    "script":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>",
+    "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>",
     "GMEEK_VERSION":"last"
 }
