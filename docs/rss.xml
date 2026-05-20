@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Tue, 19 May 2026 12:18:38 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>git</title><link>https://zy1acg.github.io/post/git.html</link><description>## 版本控制方案
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Wed, 20 May 2026 02:33:48 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>git</title><link>https://zy1acg.github.io/post/git.html</link><description>## 版本控制方案
 
 ### 游戏存档式的快照
 
@@ -8,7 +8,15 @@
 ### Remote - 方便协作 减少中心化缺点影响，多地存有版本
 #### 冲突解决
 #### 断网
-#### 数据安全性，完整性。</description><guid isPermaLink="true">https://zy1acg.github.io/post/git.html</guid><pubDate>Tue, 19 May 2026 12:18:09 +0000</pubDate></item><item><title>绘图&amp;表格软件</title><link>https://zy1acg.github.io/post/hui-tu-%26-biao-ge-ruan-jian.html</link><description>## Ink-Canvas
+#### 数据安全性，完整性
+
+### git初始化
+```bash
+git config --global user.name 'yourname'
+git config --global user.email 'youremail'
+git config --global core.editor vscode
+```
++ name commit提交信息中，别人认识你，协作情况下使用。</description><guid isPermaLink="true">https://zy1acg.github.io/post/git.html</guid><pubDate>Tue, 19 May 2026 12:18:09 +0000</pubDate></item><item><title>绘图&amp;表格软件</title><link>https://zy1acg.github.io/post/hui-tu-%26-biao-ge-ruan-jian.html</link><description>## Ink-Canvas
 + [Ink-Canvas](https://github.com/WXRIW/Ink-Canvas)
 + A fantastic Ink Canvas in WPF/C#, with fantastic support for Seewo Boards.。</description><guid isPermaLink="true">https://zy1acg.github.io/post/hui-tu-%26-biao-ge-ruan-jian.html</guid><pubDate>Sat, 16 May 2026 23:39:30 +0000</pubDate></item><item><title>markdown和笔记软件</title><link>https://zy1acg.github.io/post/markdown-he-bi-ji-ruan-jian.html</link><description>## solomd
 
