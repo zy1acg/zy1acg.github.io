@@ -203,7 +203,9 @@ git status -sb <span class="pl-c"><span class="pl-c">#</span> 查看仓库文件
 git commit -m <span class="pl-s"><span class="pl-pds">"</span>first commit<span class="pl-pds">"</span></span> <span class="pl-c"><span class="pl-c">#</span> 提交版本，生成’快照’</span>
 git log <span class="pl-c"><span class="pl-c">#</span> 查看提交信息</span>
 git log --oneline --graph <span class="pl-c"><span class="pl-c">#</span> 每个版本提交信息只显示在一行 基于文本的分支图展示</span></pre></div>
-<h2>git的配置文件层级</h2>
+<ul>
+<li>git的配置文件层级</li>
+</ul>
 <markdown-accessiblity-table><table role="table">
 <thead>
 <tr>
@@ -233,13 +235,41 @@ git log --oneline --graph <span class="pl-c"><span class="pl-c">#</span> 每个�
 <blockquote>
 <p>配置文件覆盖规则: local &gt; global &gt; system</p>
 </blockquote>
-<h2>git文件状态</h2>
+<ul>
+<li>文件状态
 <ul>
 <li>untracked</li>
 <li>unmodified</li>
 <li>modified</li>
 <li>staged</li>
-</ul></div>
+</ul>
+</li>
+</ul>
+<h2>branch</h2>
+<ul>
+<li>理解版本提交，HEAD指针，HEAD指针移动概念</li>
+</ul>
+<h3>创建branch，切换分支</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate">git branch [branchName] <span class="pl-c"><span class="pl-c">#</span> 创建branchName分支</span>
+
+git checkout -b [branchName] <span class="pl-c"><span class="pl-c">#</span> 创建branchName，并将HEAD指向新分支</span>
+
+git checkout [branchName] <span class="pl-c"><span class="pl-c">#</span> 切换到branchName分支，HEAD指向branchName分支</span></pre></div>
+<h3>merge 合并</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate">git checkout [合并目标分支] <span class="pl-c"><span class="pl-c">#</span> 指针移动</span>
+git merge [拉取的分支（被合并）] <span class="pl-c"><span class="pl-c">#</span> 注意是拉取的分支</span></pre></div>
+<blockquote>
+<p>合并的概念： 目标分支拉取被合并的分支</p>
+</blockquote>
+<h3>合并冲突</h3>
+<ul>
+<li>建议避免进行fast forward merge</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre class="notranslate">git merge --no-off [branchName]
+
+git config --global merge.ff <span class="pl-c1">false</span>
+
+git reset --hard HEAD~1 <span class="pl-c"><span class="pl-c">#</span> 回退HEAD指针，撤销回退</span></pre></div></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

@@ -54,7 +54,7 @@ git commit -m "first commit" # 提交版本，生成’快照’
 git log # 查看提交信息
 git log --oneline --graph # 每个版本提交信息只显示在一行 基于文本的分支图展示
 ```
-## git的配置文件层级
++ git的配置文件层级
 
 | 层级 | 作用范围 | 优先级 |
 | --- | --- | --- |
@@ -63,8 +63,42 @@ git log --oneline --graph # 每个版本提交信息只显示在一行 基于文
 | local(项目级)  | 当前项目 | 高 |
 > 配置文件覆盖规则: local > global > system
 
-## git文件状态
++ 文件状态
   + untracked
   + unmodified
   + modified
   + staged
+
+## branch
+
++ 理解版本提交，HEAD指针，HEAD指针移动概念
+
+### 创建branch，切换分支
+```bash
+
+git branch [branchName] # 创建branchName分支
+
+git checkout -b [branchName] # 创建branchName，并将HEAD指向新分支
+
+git checkout [branchName] # 切换到branchName分支，HEAD指向branchName分支
+```
+
+### merge 合并
+```bash
+git checkout [合并目标分支] # 指针移动
+git merge [拉取的分支（被合并）] # 注意是拉取的分支
+```
+
+> 合并的概念： 目标分支拉取被合并的分支
+
+### 合并冲突
+
++ 建议避免进行fast forward merge
+
+```bash
+git merge --no-off [branchName]
+
+git config --global merge.ff false
+
+git reset --hard HEAD~1 # 回退HEAD指针，撤销回退
+``` 
