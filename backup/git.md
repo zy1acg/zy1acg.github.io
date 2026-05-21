@@ -39,9 +39,9 @@ git config --list -local # 显示具体git文件夹配置
   + git system config path
     + C:\Program Files\Git\etc\gitconfig
   + git global config path
-    + C:\Users\<用户名>\.gitconfig
+    + C:\Users\\<用户名>\\.gitconfig
   + git local config path
-    + <项目地址>\.git\config
+    + <项目地址>\\.git\config
 
 ## git的使用
 + 准备一个git仓库文件夹
