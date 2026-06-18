@@ -1,5 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Thu, 18 Jun 2026 11:08:43 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>javascript runtime</title><link>https://zy1acg.github.io/post/javascript%20runtime.html</link><description>- nodejs
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Thu, 18 Jun 2026 11:13:37 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js web 框架</title><link>https://zy1acg.github.io/post/js%20web%20-kuang-jia.html</link><description>- Express
+- Fastify
+- Hono
+- Elysia
+
+维度 | Express | Fastify | Hono | Elysia
+-- | -- | -- | -- | --
+性能 | 基准 | 高 (约2倍于Express) | 极高 (Node.js环境媲美Fastify，边缘环境碾压) | 恐怖 (Bun环境下可达Express的21倍)
+轻量级 | 较重 (572KB) | 中等 | 极致 (14KB) | 轻量
+生产就绪 | 极高 (行业标准) | 高 (成熟稳定) | 中等 (生态较新，但已被大厂核心产品使用) | 中等 (生态和运行时稳定性仍在验证中)
+生态/插件 | 最丰富 | 丰富且成熟 | 较新，正在快速发展 | 较新，正在快速发展
+跨平台/边缘 | 仅Node.js | 仅Node.js | 完美支持 (Workers, Bun, Deno, Node.js) | 主要为Bun设计，兼容Node.js
+TypeScript支持 | 需配置 | 优秀 | 优秀 (原生类型推导) | 极致 (端到端类型安全)
+学习曲线 | 低 | 低 (类似Express) | 低 (API简洁) | 中等 (新概念较多)
+
+
+。</description><guid isPermaLink="true">https://zy1acg.github.io/post/js%20web%20-kuang-jia.html</guid><pubDate>Thu, 18 Jun 2026 11:13:05 +0000</pubDate></item><item><title>javascript runtime</title><link>https://zy1acg.github.io/post/javascript%20runtime.html</link><description>- nodejs
 - deno
 - bun
 
