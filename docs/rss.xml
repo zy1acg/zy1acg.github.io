@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Sun, 21 Jun 2026 11:24:57 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js Methods &amp; property</title><link>https://zy1acg.github.io/post/js%20Methods%20%26%20property.html</link><description>## js Methods &amp; property
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Sun, 21 Jun 2026 11:34:46 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js Methods &amp; Property</title><link>https://zy1acg.github.io/post/js%20Methods%20%26%20Property.html</link><description>## js Methods &amp; property
 ### String
 - .length			字符串长度
 - .toString()		将对象转换为字符串
@@ -30,7 +30,7 @@
 - parseFloat()		转换字符串为浮点数，忽略字符串前面空白字符，解析一个字符串并返回一个浮点数
 
 ### Math
-- Math.min()		返回零个或多个数中的最小值。</description><guid isPermaLink="true">https://zy1acg.github.io/post/js%20Methods%20%26%20property.html</guid><pubDate>Sun, 21 Jun 2026 11:24:28 +0000</pubDate></item><item><title>js 实用技巧</title><link>https://zy1acg.github.io/post/js%20-shi-yong-ji-qiao.html</link><description>## 显性字符串转数字
+- Math.min()		返回零个或多个数中的最小值。</description><guid isPermaLink="true">https://zy1acg.github.io/post/js%20Methods%20%26%20Property.html</guid><pubDate>Sun, 21 Jun 2026 11:24:28 +0000</pubDate></item><item><title>js 实用技巧</title><link>https://zy1acg.github.io/post/js%20-shi-yong-ji-qiao.html</link><description>## 显性字符串转数字
 ```javascript
 const str = '10';
 const num = +str; //字符串转数字
