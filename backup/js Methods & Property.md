@@ -1,4 +1,4 @@
-## js Methods & property
+## js Methods & Property
 ### String
 - .length			字符串长度
 - .toString()		将对象转换为字符串
