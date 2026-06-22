@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Sun, 21 Jun 2026 11:41:33 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js Methods &amp; Property</title><link>https://zy1acg.github.io/post/js%20Methods%20%26%20Property.html</link><description>## js Methods &amp; Property
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Mon, 22 Jun 2026 12:22:01 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js Methods &amp; Property</title><link>https://zy1acg.github.io/post/js%20Methods%20%26%20Property.html</link><description>## js Methods &amp; Property
 ### String
 - .length			字符串长度
 - .toString()		将对象转换为字符串
@@ -37,7 +37,33 @@ const num = +str; //字符串转数字
 ```
 
 ## 显性转boolean
-`const bool = !!'true';`。</description><guid isPermaLink="true">https://zy1acg.github.io/post/js%20-shi-yong-ji-qiao.html</guid><pubDate>Sat, 20 Jun 2026 07:51:24 +0000</pubDate></item><item><title>js 隐式转换</title><link>https://zy1acg.github.io/post/js%20-yin-shi-zhuan-huan.html</link><description>## 误区一
+`const bool = !!'true';`
+
+## 浮点数计算精度问题
+- 如果对精度不敏感， 可以考虑 `toFixed` 方法进行小数截取
+```js
+console.log((0.1 + 0.2).toFixed(2)) //0.3
+
+console.log(1.0 - 0.9) //0.09999999999999998
+console.log((1.0 - 0.9).toFixed(2)) //0.10
+```
+- 将小数转为整数进行计算后，再转为小数也可以解决精度问题
+```js
+Number.prototype.add = function (num) {
+	//取两个数值中小数位最大的
+  let n1 = this.toString().split('.')[1].length
+  let n2 = num.toString().split('.')[1].length
+
+  //得到10的N次幂
+  let m = Math.pow(10, Math.max(n1, n2))
+
+  return (this * m + num * m) / m
+}
+console.log((0.1).add(0.2))
+```
+&gt; [!important]
+&gt; 推荐做法
+&gt; 市面上已经存在很多针对数学计算的库 [mathjs](https://mathjs.org/examples/browser/basic_usage.html.html) 、[decimal.js](http://mikemcl.github.io/decimal.js) 等，我们就不需要自己构建了。</description><guid isPermaLink="true">https://zy1acg.github.io/post/js%20-shi-yong-ji-qiao.html</guid><pubDate>Sat, 20 Jun 2026 07:51:24 +0000</pubDate></item><item><title>js 隐式转换</title><link>https://zy1acg.github.io/post/js%20-yin-shi-zhuan-huan.html</link><description>## 误区一
 &gt; [!warning]
 &gt; `console.log(3 == true); //false`
 
