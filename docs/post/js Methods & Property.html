@@ -185,6 +185,57 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>.map()			创建一个新数组，其结果是该数组中的每个元素都调用一次提供的函数后的返回值</li>
 <li>.join(): 将数组	（或类数组对象）的所有元素连接成一个字符串</li>
 </ul>
+<h4>🏗️ 创建与转换方法</h4>
+<ul>
+<li><strong><code class="notranslate">Array.of()</code></strong>: 创建一个具有可变数量参数的新数组实例，避免因单个数字参数创建空元素数组的问题。</li>
+<li><strong><code class="notranslate">Array.isArray()</code></strong>: 检测传入的变量是否为数组类型，返回布尔值。</li>
+<li><strong><code class="notranslate">Array.from()</code></strong>: 将类数组对象（如 DOM 节点列表）或可迭代对象转换为真正的数组。</li>
+<li><strong><code class="notranslate">toString()</code></strong>: 将数组的所有元素转换为一个由逗号分隔的字符串。</li>
+<li><strong><code class="notranslate">join()</code></strong>: 使用指定的分隔符将数组的所有元素连接成一个字符串。</li>
+</ul>
+<h4>➕ 元素管理（增删改）方法</h4>
+<ul>
+<li><strong><code class="notranslate">push()</code></strong>: 在数组末尾添加一个或多个元素，并返回修改后的数组长度。</li>
+<li><strong><code class="notranslate">pop()</code></strong>: 移除并返回数组的最后一个元素。</li>
+<li><strong><code class="notranslate">shift()</code></strong>: 移除并返回数组的第一个元素。</li>
+<li><strong><code class="notranslate">unshift()</code></strong>: 在数组开头添加一个或多个元素，并返回修改后的数组长度。</li>
+<li><strong><code class="notranslate">fill()</code></strong>: 使用指定的固定值填充数组的全部或部分元素。</li>
+<li><strong><code class="notranslate">slice()</code></strong>: 提取数组的一部分并返回一个新数组，不会改变原数组。</li>
+<li><strong><code class="notranslate">splice()</code></strong>: 通过删除、替换或添加元素来直接修改原数组，并返回被删除的元素数组。</li>
+</ul>
+<h4>🔗 合并与复制方法</h4>
+<ul>
+<li><strong><code class="notranslate">concat()</code></strong>: 合并两个或多个数组，返回一个合并后的新数组。</li>
+<li><strong><code class="notranslate">copyWithin()</code></strong>: 将数组中指定位置的元素复制到同一数组的另一个目标位置。</li>
+</ul>
+<h4>🔍 查找元素方法</h4>
+<ul>
+<li><strong><code class="notranslate">indexOf()</code></strong>: 从前往后查找指定元素在数组中首次出现的索引，找不到则返回 <code class="notranslate">-1</code>。</li>
+<li><strong><code class="notranslate">lastIndexOf()</code></strong>: 从后往前查找指定元素在数组中首次出现的索引，找不到则返回 <code class="notranslate">-1</code>。</li>
+<li><strong><code class="notranslate">includes()</code></strong>: 判断数组中是否包含指定的元素，返回 <code class="notranslate">true</code> 或 <code class="notranslate">false</code>。</li>
+<li><strong><code class="notranslate">find()</code></strong>: 返回数组中第一个满足指定回调函数条件的元素的值，找不到返回 <code class="notranslate">undefined</code>。</li>
+<li><strong><code class="notranslate">findIndex()</code></strong>: 返回数组中第一个满足指定回调函数条件的元素的索引，找不到返回 <code class="notranslate">-1</code>。</li>
+</ul>
+<h4>🔄 排序方法</h4>
+<ul>
+<li><strong><code class="notranslate">reverse()</code></strong>: 将数组中的元素位置进行反转（颠倒顺序）。</li>
+<li><strong><code class="notranslate">sort()</code></strong>: 对数组的元素进行排序（可传入自定义比较函数实现升序或降序）。</li>
+</ul>
+<h4>🔁 循环与迭代方法</h4>
+<ul>
+<li><strong><code class="notranslate">forEach()</code></strong>: 遍历数组并对每个元素执行一次指定的回调函数，无返回值。</li>
+<li><strong><code class="notranslate">keys()</code></strong>: 返回一个包含数组所有索引（键）的可迭代对象。</li>
+<li><strong><code class="notranslate">values()</code></strong>: 返回一个包含数组所有元素（值）的可迭代对象。</li>
+<li><strong><code class="notranslate">entries()</code></strong>: 返回一个包含数组所有键值对（索引和值）的可迭代对象。</li>
+</ul>
+<h4>🛠️ 高阶扩展方法</h4>
+<ul>
+<li><strong><code class="notranslate">every()</code></strong>: 检测数组中的<strong>所有</strong>元素是否都满足指定条件，全部满足才返回 <code class="notranslate">true</code>。</li>
+<li><strong><code class="notranslate">some()</code></strong>: 检测数组中是否<strong>至少有一个</strong>元素满足指定条件，有一个满足即返回 <code class="notranslate">true</code>。</li>
+<li><strong><code class="notranslate">filter()</code></strong>: 过滤数组，创建一个新数组，其中包含所有满足指定条件的元素。</li>
+<li><strong><code class="notranslate">map()</code></strong>: 映射数组，创建一个新数组，其结果是原数组每个元素调用指定函数后的返回值。</li>
+<li><strong><code class="notranslate">reduce()</code></strong>: 迭代数组的所有元素，通过累加器将其汇总计算为一个单一的返回值（如求和、求最大值）。</li>
+</ul>
 <h3>Object</h3>
 <ul>
 <li>Object.freeze	冻结修改</li>
