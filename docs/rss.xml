@@ -1,5 +1,101 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Tue, 23 Jun 2026 05:44:09 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js 坑</title><link>https://zy1acg.github.io/post/js%20-keng.html</link><description>## 类型转换
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Tue, 23 Jun 2026 07:41:41 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js 工具库</title><link>https://zy1acg.github.io/post/js%20-gong-ju-ku.html</link><description>## Time
+
+### 📦 Day.js
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~2KB（gzip 后） |
+| **设计理念** | 极简、不可变、插件化 |
+
+**✅ 优点：**
+- **极致轻量**：体积仅约 2KB，是 Moment.js 的 1/30+
+- **API 高度兼容 Moment.js**：语法几乎一致，迁移成本极低，如 `dayjs('2023-08-01').format('YYYY-MM-DD')` 写法完全相同
+- **不可变设计**：每次操作返回新实例，避免意外副作用（Moment.js 是可变对象，容易踩坑）
+- **插件机制**：通过插件按需扩展（相对时间、时区、i18n 等）
+- **链式调用**：支持优雅的链式语法
+- **多环境支持**：浏览器和 Node.js 通用
+
+**❌ 缺点：**
+- **核心功能较少**：高级功能（如时区处理）必须依赖插件，增加额外配置
+- **复杂场景不足**：在处理复杂时区、日历系统等方面不如 Moment.js 和 Luxon
+- **生态不如 Moment.js 成熟**：部分边缘情况文档覆盖不够
+
+---
+
+### 📦 Moment.js
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~67KB（含 locale 更大） |
+| **设计理念** | 大而全、一站式解决 |
+
+**✅ 优点：**
+- **功能极其全面**：解析、格式化、计算、比较、时区、持续时间等一应俱全
+- **API 设计经典**：链式调用直观易用，几乎是日期库的'标杆'
+- **生态成熟**：海量插件（moment-timezone 等）、Stack Overflow 问答丰富
+- **文档完善**：几乎每种场景都有示例
+- **国际化支持好**：内置多语言
+
+**❌ 缺点：**
+- **体积臃肿**：即使 min+gzip 后也有约 18-20KB，对前端性能不友好
+- **可变对象**：操作会改变原对象，容易产生难以排查的 Bug
+- **官方已停止积极开发**：2020 年被标记为 **'Legacy Project（不推荐新项目使用）'**
+- **不支持 Tree-shaking**：无法按需加载，打包时全量引入
+- **性能较低**：在大量日期运算场景下性能不如现代库
+
+---
+
+### ⚔️ Day.js vs Moment.js 速览
+
+| 对比项 | Day.js | Moment.js |
+|--------|--------|-----------|
+| 体积 | ~2KB | ~67KB |
+| 可变性 | **不可变** ✅ | 可变 ❌ |
+| API 风格 | 与 Moment 兼容 | 原创经典 |
+| Tree-shaking | 部分支持（插件化） | 不支持 |
+| 时区支持 | 需插件 | 需 moment-timezone |
+| 官方状态 | 活跃维护 | **已停止积极开发** |
+| 适合场景 | 新项目、轻量化需求 | 老项目维护 |
+
+---
+
+### 📦 date-fns
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | 按需引入，单个函数仅几百字节 |
+| **设计理念** | 函数式、模块化、纯函数 |
+
+**✅ 优点：**
+- **完美支持 Tree-shaking**：每个函数独立导出，只打包用到的部分
+- **纯函数无副作用**：不会修改传入的日期对象
+- **TypeScript 原生支持**：类型提示完善
+- **200+ 函数**：覆盖格式化、比较、间隔计算等几乎所有场景
+- **ESM 友好**：非常适合现代构建工具（Vite、Webpack 5+）
+
+**❌ 缺点：**
+- **不支持链式调用**：需要嵌套函数调用，如 `format(addDays(new Date(), 7), 'yyyy-MM-dd')`
+- **无面向对象封装**：习惯 OOP 的开发者需要适应
+- **时区支持有限**：v3+ 通过 `@date-fns/tz` 和 `@date-fns/utc` 包支持，但仍不如 Luxon 完善
+- **格式化语法不同**：使用 Unicode 标准（如 `yyyy-MM-dd`），与 Moment.js（`YYYY-MM-DD`）不同，有学习成本
+
+**示例：**
+```js
+import { format, addDays, isAfter } from 'date-fns';
+format(addDays(new Date(), 7), 'yyyy-MM-dd');
+```
+
+---
+
+### 📦 Luxon
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~22KB（gzip） |
+| **设计理念** | 现代、不可变、基于 Intl API |
+
+&gt; 由 Moment.js 核心团队成员 Isaac Cambron 开发，被视为 Moment.js 的'精神继承者'。</description><guid isPermaLink="true">https://zy1acg.github.io/post/js%20-gong-ju-ku.html</guid><pubDate>Tue, 23 Jun 2026 07:41:12 +0000</pubDate></item><item><title>js 坑</title><link>https://zy1acg.github.io/post/js%20-keng.html</link><description>## 类型转换
 
 &gt; [!warning] 
 &gt; 在 JavaScript 中，`console.log(Number({}));` 的结果是 `NaN`，这是因为 **JavaScript 引擎在将对象转换为数字时，经历了一个失败的类型转换过程**。</description><guid isPermaLink="true">https://zy1acg.github.io/post/js%20-keng.html</guid><pubDate>Tue, 23 Jun 2026 05:43:34 +0000</pubDate></item><item><title>js Methods &amp; Property</title><link>https://zy1acg.github.io/post/js%20Methods%20%26%20Property.html</link><description>## js Methods &amp; Property

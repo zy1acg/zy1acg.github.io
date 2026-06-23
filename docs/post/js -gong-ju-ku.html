@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark_colorblind" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>
+    <link rel="icon" href="https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="## Time
+
+### 📦 Day.js
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~2KB（gzip 后） |
+| **设计理念** | 极简、不可变、插件化 |
+
+**✅ 优点：**
+- **极致轻量**：体积仅约 2KB，是 Moment.js 的 1/30+
+- **API 高度兼容 Moment.js**：语法几乎一致，迁移成本极低，如 `dayjs('2023-08-01').format('YYYY-MM-DD')` 写法完全相同
+- **不可变设计**：每次操作返回新实例，避免意外副作用（Moment.js 是可变对象，容易踩坑）
+- **插件机制**：通过插件按需扩展（相对时间、时区、i18n 等）
+- **链式调用**：支持优雅的链式语法
+- **多环境支持**：浏览器和 Node.js 通用
+
+**❌ 缺点：**
+- **核心功能较少**：高级功能（如时区处理）必须依赖插件，增加额外配置
+- **复杂场景不足**：在处理复杂时区、日历系统等方面不如 Moment.js 和 Luxon
+- **生态不如 Moment.js 成熟**：部分边缘情况文档覆盖不够
+
+---
+
+### 📦 Moment.js
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~67KB（含 locale 更大） |
+| **设计理念** | 大而全、一站式解决 |
+
+**✅ 优点：**
+- **功能极其全面**：解析、格式化、计算、比较、时区、持续时间等一应俱全
+- **API 设计经典**：链式调用直观易用，几乎是日期库的'标杆'
+- **生态成熟**：海量插件（moment-timezone 等）、Stack Overflow 问答丰富
+- **文档完善**：几乎每种场景都有示例
+- **国际化支持好**：内置多语言
+
+**❌ 缺点：**
+- **体积臃肿**：即使 min+gzip 后也有约 18-20KB，对前端性能不友好
+- **可变对象**：操作会改变原对象，容易产生难以排查的 Bug
+- **官方已停止积极开发**：2020 年被标记为 **'Legacy Project（不推荐新项目使用）'**
+- **不支持 Tree-shaking**：无法按需加载，打包时全量引入
+- **性能较低**：在大量日期运算场景下性能不如现代库
+
+---
+
+### ⚔️ Day.js vs Moment.js 速览
+
+| 对比项 | Day.js | Moment.js |
+|--------|--------|-----------|
+| 体积 | ~2KB | ~67KB |
+| 可变性 | **不可变** ✅ | 可变 ❌ |
+| API 风格 | 与 Moment 兼容 | 原创经典 |
+| Tree-shaking | 部分支持（插件化） | 不支持 |
+| 时区支持 | 需插件 | 需 moment-timezone |
+| 官方状态 | 活跃维护 | **已停止积极开发** |
+| 适合场景 | 新项目、轻量化需求 | 老项目维护 |
+
+---
+
+### 📦 date-fns
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | 按需引入，单个函数仅几百字节 |
+| **设计理念** | 函数式、模块化、纯函数 |
+
+**✅ 优点：**
+- **完美支持 Tree-shaking**：每个函数独立导出，只打包用到的部分
+- **纯函数无副作用**：不会修改传入的日期对象
+- **TypeScript 原生支持**：类型提示完善
+- **200+ 函数**：覆盖格式化、比较、间隔计算等几乎所有场景
+- **ESM 友好**：非常适合现代构建工具（Vite、Webpack 5+）
+
+**❌ 缺点：**
+- **不支持链式调用**：需要嵌套函数调用，如 `format(addDays(new Date(), 7), 'yyyy-MM-dd')`
+- **无面向对象封装**：习惯 OOP 的开发者需要适应
+- **时区支持有限**：v3+ 通过 `@date-fns/tz` 和 `@date-fns/utc` 包支持，但仍不如 Luxon 完善
+- **格式化语法不同**：使用 Unicode 标准（如 `yyyy-MM-dd`），与 Moment.js（`YYYY-MM-DD`）不同，有学习成本
+
+**示例：**
+```js
+import { format, addDays, isAfter } from 'date-fns';
+format(addDays(new Date(), 7), 'yyyy-MM-dd');
+```
+
+---
+
+### 📦 Luxon
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~22KB（gzip） |
+| **设计理念** | 现代、不可变、基于 Intl API |
+
+> 由 Moment.js 核心团队成员 Isaac Cambron 开发，被视为 Moment.js 的'精神继承者'。">
+<meta property="og:title" content="js 工具库">
+<meta property="og:description" content="## Time
+
+### 📦 Day.js
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~2KB（gzip 后） |
+| **设计理念** | 极简、不可变、插件化 |
+
+**✅ 优点：**
+- **极致轻量**：体积仅约 2KB，是 Moment.js 的 1/30+
+- **API 高度兼容 Moment.js**：语法几乎一致，迁移成本极低，如 `dayjs('2023-08-01').format('YYYY-MM-DD')` 写法完全相同
+- **不可变设计**：每次操作返回新实例，避免意外副作用（Moment.js 是可变对象，容易踩坑）
+- **插件机制**：通过插件按需扩展（相对时间、时区、i18n 等）
+- **链式调用**：支持优雅的链式语法
+- **多环境支持**：浏览器和 Node.js 通用
+
+**❌ 缺点：**
+- **核心功能较少**：高级功能（如时区处理）必须依赖插件，增加额外配置
+- **复杂场景不足**：在处理复杂时区、日历系统等方面不如 Moment.js 和 Luxon
+- **生态不如 Moment.js 成熟**：部分边缘情况文档覆盖不够
+
+---
+
+### 📦 Moment.js
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~67KB（含 locale 更大） |
+| **设计理念** | 大而全、一站式解决 |
+
+**✅ 优点：**
+- **功能极其全面**：解析、格式化、计算、比较、时区、持续时间等一应俱全
+- **API 设计经典**：链式调用直观易用，几乎是日期库的'标杆'
+- **生态成熟**：海量插件（moment-timezone 等）、Stack Overflow 问答丰富
+- **文档完善**：几乎每种场景都有示例
+- **国际化支持好**：内置多语言
+
+**❌ 缺点：**
+- **体积臃肿**：即使 min+gzip 后也有约 18-20KB，对前端性能不友好
+- **可变对象**：操作会改变原对象，容易产生难以排查的 Bug
+- **官方已停止积极开发**：2020 年被标记为 **'Legacy Project（不推荐新项目使用）'**
+- **不支持 Tree-shaking**：无法按需加载，打包时全量引入
+- **性能较低**：在大量日期运算场景下性能不如现代库
+
+---
+
+### ⚔️ Day.js vs Moment.js 速览
+
+| 对比项 | Day.js | Moment.js |
+|--------|--------|-----------|
+| 体积 | ~2KB | ~67KB |
+| 可变性 | **不可变** ✅ | 可变 ❌ |
+| API 风格 | 与 Moment 兼容 | 原创经典 |
+| Tree-shaking | 部分支持（插件化） | 不支持 |
+| 时区支持 | 需插件 | 需 moment-timezone |
+| 官方状态 | 活跃维护 | **已停止积极开发** |
+| 适合场景 | 新项目、轻量化需求 | 老项目维护 |
+
+---
+
+### 📦 date-fns
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | 按需引入，单个函数仅几百字节 |
+| **设计理念** | 函数式、模块化、纯函数 |
+
+**✅ 优点：**
+- **完美支持 Tree-shaking**：每个函数独立导出，只打包用到的部分
+- **纯函数无副作用**：不会修改传入的日期对象
+- **TypeScript 原生支持**：类型提示完善
+- **200+ 函数**：覆盖格式化、比较、间隔计算等几乎所有场景
+- **ESM 友好**：非常适合现代构建工具（Vite、Webpack 5+）
+
+**❌ 缺点：**
+- **不支持链式调用**：需要嵌套函数调用，如 `format(addDays(new Date(), 7), 'yyyy-MM-dd')`
+- **无面向对象封装**：习惯 OOP 的开发者需要适应
+- **时区支持有限**：v3+ 通过 `@date-fns/tz` 和 `@date-fns/utc` 包支持，但仍不如 Luxon 完善
+- **格式化语法不同**：使用 Unicode 标准（如 `yyyy-MM-dd`），与 Moment.js（`YYYY-MM-DD`）不同，有学习成本
+
+**示例：**
+```js
+import { format, addDays, isAfter } from 'date-fns';
+format(addDays(new Date(), 7), 'yyyy-MM-dd');
+```
+
+---
+
+### 📦 Luxon
+
+| 维度 | 说明 |
+|------|------|
+| **体积** | ~22KB（gzip） |
+| **设计理念** | 现代、不可变、基于 Intl API |
+
+> 由 Moment.js 核心团队成员 Isaac Cambron 开发，被视为 Moment.js 的'精神继承者'。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zy1acg.github.io/post/js%20-gong-ju-ku.html">
+<meta property="og:image" content="https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg">
+<title>js 工具库</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">js 工具库</h1>
+<div class="title-right">
+    <a href="https://zy1acg.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/zy1acg/zy1acg.github.io/issues/10" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h2>Time</h2>
+<h3>📦 Day.js</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>体积</strong></td>
+<td>~2KB（gzip 后）</td>
+</tr>
+<tr>
+<td><strong>设计理念</strong></td>
+<td>极简、不可变、插件化</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>✅ 优点：</strong></p>
+<ul>
+<li><strong>极致轻量</strong>：体积仅约 2KB，是 Moment.js 的 1/30+</li>
+<li><strong>API 高度兼容 Moment.js</strong>：语法几乎一致，迁移成本极低，如 <code class="notranslate">dayjs('2023-08-01').format('YYYY-MM-DD')</code> 写法完全相同</li>
+<li><strong>不可变设计</strong>：每次操作返回新实例，避免意外副作用（Moment.js 是可变对象，容易踩坑）</li>
+<li><strong>插件机制</strong>：通过插件按需扩展（相对时间、时区、i18n 等）</li>
+<li><strong>链式调用</strong>：支持优雅的链式语法</li>
+<li><strong>多环境支持</strong>：浏览器和 Node.js 通用</li>
+</ul>
+<p><strong>❌ 缺点：</strong></p>
+<ul>
+<li><strong>核心功能较少</strong>：高级功能（如时区处理）必须依赖插件，增加额外配置</li>
+<li><strong>复杂场景不足</strong>：在处理复杂时区、日历系统等方面不如 Moment.js 和 Luxon</li>
+<li><strong>生态不如 Moment.js 成熟</strong>：部分边缘情况文档覆盖不够</li>
+</ul>
+<hr>
+<h3>📦 Moment.js</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>体积</strong></td>
+<td>~67KB（含 locale 更大）</td>
+</tr>
+<tr>
+<td><strong>设计理念</strong></td>
+<td>大而全、一站式解决</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>✅ 优点：</strong></p>
+<ul>
+<li><strong>功能极其全面</strong>：解析、格式化、计算、比较、时区、持续时间等一应俱全</li>
+<li><strong>API 设计经典</strong>：链式调用直观易用，几乎是日期库的"标杆"</li>
+<li><strong>生态成熟</strong>：海量插件（moment-timezone 等）、Stack Overflow 问答丰富</li>
+<li><strong>文档完善</strong>：几乎每种场景都有示例</li>
+<li><strong>国际化支持好</strong>：内置多语言</li>
+</ul>
+<p><strong>❌ 缺点：</strong></p>
+<ul>
+<li><strong>体积臃肿</strong>：即使 min+gzip 后也有约 18-20KB，对前端性能不友好</li>
+<li><strong>可变对象</strong>：操作会改变原对象，容易产生难以排查的 Bug</li>
+<li><strong>官方已停止积极开发</strong>：2020 年被标记为 <strong>"Legacy Project（不推荐新项目使用）"</strong></li>
+<li><strong>不支持 Tree-shaking</strong>：无法按需加载，打包时全量引入</li>
+<li><strong>性能较低</strong>：在大量日期运算场景下性能不如现代库</li>
+</ul>
+<hr>
+<h3>⚔️ Day.js vs Moment.js 速览</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>对比项</th>
+<th>Day.js</th>
+<th>Moment.js</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>体积</td>
+<td>~2KB</td>
+<td>~67KB</td>
+</tr>
+<tr>
+<td>可变性</td>
+<td><strong>不可变</strong> ✅</td>
+<td>可变 ❌</td>
+</tr>
+<tr>
+<td>API 风格</td>
+<td>与 Moment 兼容</td>
+<td>原创经典</td>
+</tr>
+<tr>
+<td>Tree-shaking</td>
+<td>部分支持（插件化）</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>时区支持</td>
+<td>需插件</td>
+<td>需 moment-timezone</td>
+</tr>
+<tr>
+<td>官方状态</td>
+<td>活跃维护</td>
+<td><strong>已停止积极开发</strong></td>
+</tr>
+<tr>
+<td>适合场景</td>
+<td>新项目、轻量化需求</td>
+<td>老项目维护</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h3>📦 date-fns</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>体积</strong></td>
+<td>按需引入，单个函数仅几百字节</td>
+</tr>
+<tr>
+<td><strong>设计理念</strong></td>
+<td>函数式、模块化、纯函数</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>✅ 优点：</strong></p>
+<ul>
+<li><strong>完美支持 Tree-shaking</strong>：每个函数独立导出，只打包用到的部分</li>
+<li><strong>纯函数无副作用</strong>：不会修改传入的日期对象</li>
+<li><strong>TypeScript 原生支持</strong>：类型提示完善</li>
+<li><strong>200+ 函数</strong>：覆盖格式化、比较、间隔计算等几乎所有场景</li>
+<li><strong>ESM 友好</strong>：非常适合现代构建工具（Vite、Webpack 5+）</li>
+</ul>
+<p><strong>❌ 缺点：</strong></p>
+<ul>
+<li><strong>不支持链式调用</strong>：需要嵌套函数调用，如 <code class="notranslate">format(addDays(new Date(), 7), 'yyyy-MM-dd')</code></li>
+<li><strong>无面向对象封装</strong>：习惯 OOP 的开发者需要适应</li>
+<li><strong>时区支持有限</strong>：v3+ 通过 <code class="notranslate">@date-fns/tz</code> 和 <code class="notranslate">@date-fns/utc</code> 包支持，但仍不如 Luxon 完善</li>
+<li><strong>格式化语法不同</strong>：使用 Unicode 标准（如 <code class="notranslate">yyyy-MM-dd</code>），与 Moment.js（<code class="notranslate">YYYY-MM-DD</code>）不同，有学习成本</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-kos">{</span> <span class="pl-s1">format</span><span class="pl-kos">,</span> <span class="pl-s1">addDays</span><span class="pl-kos">,</span> <span class="pl-s1">isAfter</span> <span class="pl-kos">}</span> <span class="pl-k">from</span> <span class="pl-s">'date-fns'</span><span class="pl-kos">;</span>
+<span class="pl-en">format</span><span class="pl-kos">(</span><span class="pl-en">addDays</span><span class="pl-kos">(</span><span class="pl-k">new</span> <span class="pl-v">Date</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">,</span> <span class="pl-c1">7</span><span class="pl-kos">)</span><span class="pl-kos">,</span> <span class="pl-s">'yyyy-MM-dd'</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+<hr>
+<h3>📦 Luxon</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>体积</strong></td>
+<td>~22KB（gzip）</td>
+</tr>
+<tr>
+<td><strong>设计理念</strong></td>
+<td>现代、不可变、基于 Intl API</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<blockquote>
+<p>由 Moment.js 核心团队成员 Isaac Cambron 开发，被视为 Moment.js 的"精神继承者"。</p>
+</blockquote>
+<p><strong>✅ 优点：</strong></p>
+<ul>
+<li><strong>原生时区支持</strong>：基于浏览器 <code class="notranslate">Intl</code> API，无需额外数据库</li>
+<li><strong>不可变设计</strong>：每次操作返回新实例</li>
+<li><strong>国际化原生支持</strong>：利用 <code class="notranslate">Intl.DateTimeFormat</code>，无需打包 locale 文件</li>
+<li><strong>API 设计清晰现代</strong>：<code class="notranslate">DateTime</code>、<code class="notranslate">Duration</code>、<code class="notranslate">Interval</code> 三大核心类，语义明确</li>
+<li><strong>支持多种日历系统</strong></li>
+</ul>
+<p><strong>❌ 缺点：</strong></p>
+<ul>
+<li><strong>体积偏大</strong>：比 Day.js 大很多</li>
+<li><strong>不支持旧浏览器</strong>：依赖 <code class="notranslate">Intl</code> API，IE11 完全不支持</li>
+<li><strong>学习曲线较高</strong>：概念较多（DateTime vs Duration vs Interval）</li>
+<li><strong>不支持链式调用</strong>（与 Moment.js 风格不同）</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-kos">{</span> <span class="pl-v">DateTime</span> <span class="pl-kos">}</span> <span class="pl-k">from</span> <span class="pl-s">'luxon'</span><span class="pl-kos">;</span>
+<span class="pl-v">DateTime</span><span class="pl-kos">.</span><span class="pl-en">now</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">setZone</span><span class="pl-kos">(</span><span class="pl-s">'America/New_York'</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">plus</span><span class="pl-kos">(</span><span class="pl-kos">{</span> <span class="pl-c1">weeks</span>: <span class="pl-c1">1</span> <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">toISO</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+<hr>
+<h3>📦 js-joda</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>体积</strong></td>
+<td>~35KB</td>
+</tr>
+<tr>
+<td><strong>设计理念</strong></td>
+<td>类型安全、从 Java Joda-Time / JSR-310 移植</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>✅ 优点：</strong></p>
+<ul>
+<li><strong>类型极其安全</strong>：严格的类型检查，适合企业级严谨场景</li>
+<li><strong>API 与 Java java.time 一致</strong>：Java 开发者零学习成本</li>
+<li><strong>不可变设计</strong></li>
+<li><strong>时区支持好</strong>（通过 <code class="notranslate">@js-joda/timezone</code>）</li>
+</ul>
+<p><strong>❌ 缺点：</strong></p>
+<ul>
+<li><strong>社区较小</strong>：npm 周下载量远低于其他库</li>
+<li><strong>API 偏 Java 风格</strong>：前端开发者可能不习惯</li>
+<li><strong>体积偏大</strong></li>
+<li><strong>文档和社区资源少</strong></li>
+</ul>
+<hr>
+<h3>📦 Temporal API（未来原生标准）⚡</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>体积</strong></td>
+<td>0（浏览器原生）</td>
+</tr>
+<tr>
+<td><strong>状态</strong></td>
+<td>TC39 Stage 4，预计 2027 年正式纳入 JS 标准</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<blockquote>
+<p>这不是第三方库，而是 <strong>JavaScript 的下一代原生日期时间 API</strong>，旨在彻底取代饱受诟病的 <code class="notranslate">Date</code> 对象。</p>
+</blockquote>
+<p><strong>✅ 优点：</strong></p>
+<ul>
+<li><strong>浏览器原生</strong>：无需引入任何第三方库</li>
+<li><strong>彻底解决 Date 对象的设计缺陷</strong>：时区、月份溢出、可变性等问题全部解决</li>
+<li><strong>不可变设计</strong></li>
+<li><strong>一流的时区和日历支持</strong></li>
+<li><strong>API 设计现代化</strong>：<code class="notranslate">Temporal.PlainDate</code>、<code class="notranslate">Temporal.ZonedDateTime</code>、<code class="notranslate">Temporal.Duration</code> 等</li>
+</ul>
+<p><strong>❌ 缺点：</strong></p>
+<ul>
+<li><strong>浏览器支持不完善</strong>：截至 2026 年 6 月，Chrome 和 Firefox 已部分支持，Safari 仍在推进中</li>
+<li><strong>目前仍需 Polyfill</strong>：生产环境使用需引入 polyfill（如 <code class="notranslate">@js-temporal/polyfill</code>）</li>
+<li><strong>生态尚在早期</strong>：社区库和工具支持有限</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-k">const</span> <span class="pl-s1">now</span> <span class="pl-c1">=</span> <span class="pl-v">Temporal</span><span class="pl-kos">.</span><span class="pl-c1">Now</span><span class="pl-kos">.</span><span class="pl-en">zonedDateTimeISO</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-k">const</span> <span class="pl-s1">nextWeek</span> <span class="pl-c1">=</span> <span class="pl-s1">now</span><span class="pl-kos">.</span><span class="pl-en">add</span><span class="pl-kos">(</span><span class="pl-kos">{</span> <span class="pl-c1">weeks</span>: <span class="pl-c1">1</span> <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-smi">console</span><span class="pl-kos">.</span><span class="pl-en">log</span><span class="pl-kos">(</span><span class="pl-s1">nextWeek</span><span class="pl-kos">.</span><span class="pl-en">toString</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+<hr>
+<h2>三、总览对比表</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>特性</th>
+<th>Moment.js</th>
+<th>Day.js</th>
+<th>date-fns</th>
+<th>Luxon</th>
+<th>js-joda</th>
+<th>Temporal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>体积</strong></td>
+<td>🔴 ~67KB</td>
+<td>🟢 ~2KB</td>
+<td>🟢 按需</td>
+<td>🟡 ~22KB</td>
+<td>🟡 ~35KB</td>
+<td>🟢 原生</td>
+</tr>
+<tr>
+<td><strong>不可变性</strong></td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>链式调用</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Tree-shaking</strong></td>
+<td>❌</td>
+<td>🟡 插件化</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>时区支持</strong></td>
+<td>插件</td>
+<td>插件</td>
+<td>有限</td>
+<td>✅ 原生</td>
+<td>插件</td>
+<td>✅ 原生</td>
+</tr>
+<tr>
+<td><strong>国际化</strong></td>
+<td>✅</td>
+<td>插件</td>
+<td>✅</td>
+<td>✅ Intl</td>
+<td>有限</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>TypeScript</strong></td>
+<td>🟡 类型包</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>官方状态</strong></td>
+<td>⛔ 维护模式</td>
+<td>✅ 活跃</td>
+<td>✅ 活跃</td>
+<td>✅ 活跃</td>
+<td>🟡 一般</td>
+<td>🟡 标准推进中</td>
+</tr>
+<tr>
+<td><strong>学习成本</strong></td>
+<td>低</td>
+<td>低</td>
+<td>中</td>
+<td>中高</td>
+<td>高（Java风）</td>
+<td>中</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2>四、选型建议</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>从 Moment.js 迁移</strong></td>
+<td>👉 <strong>Day.js</strong>（API 兼容，改动最小）</td>
+</tr>
+<tr>
+<td><strong>新项目 / 追求轻量</strong></td>
+<td>👉 <strong>Day.js</strong> 或 <strong>date-fns</strong></td>
+</tr>
+<tr>
+<td><strong>复杂时区 / 国际化</strong></td>
+<td>👉 <strong>Luxon</strong></td>
+</tr>
+<tr>
+<td><strong>函数式编程 / Tree-shaking</strong></td>
+<td>👉 <strong>date-fns</strong></td>
+</tr>
+<tr>
+<td><strong>Java 团队 / 企业级严谨场景</strong></td>
+<td>👉 <strong>js-joda</strong></td>
+</tr>
+<tr>
+<td><strong>面向未来 / 愿意尝鲜</strong></td>
+<td>👉 <strong>Temporal API</strong>（配合 polyfill）</td>
+</tr>
+<tr>
+<td><strong>老项目维护</strong></td>
+<td>Moment.js 继续用，但<strong>新代码避免引入</strong></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<blockquote>
+<p>💡 <strong>总结</strong>：Moment.js 已正式"退役"，新项目请在 Day.js、date-fns、Luxon 中选择；长远来看，Temporal API 将是所有 JavaScript 日期库的终极替代方案。</p>
+</blockquote></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://zy1acg.github.io">Z's Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","zy1acg/zy1acg.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>
+
+</html>
