@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark_colorblind" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>
+    <link rel="icon" href="https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="
+
+## 对比1
+---
+
+## 📊 核心库对比总览
+
+| 库 | 定位 | 包大小 | TypeScript | 性能 | Tree-shaking | 维护状态 | 周下载量 | Stars |
+|---|---|---|---|---|---|---|---|---|
+| **Lodash** | 传统全能型 | ~24KB core / ~69KB full | 需额外安装 @types | 中等（兼容优先） | 支持（lodash-es） | 成熟但更新缓慢 | ~7400万 | ~61K |
+| **Ramda** | 函数式编程 | ~1.2MB | 类型推断差 | 中等 | 支持 | 活跃 | ~1080万 | ~24K |
+| **Radash** | 现代轻量工具库 | ~4.8KB gzipped | ✅ 原生支持 | 良好 | 优秀 | 原作者停止，社区接管中 | ~10万+ | ~4.8K |
+| **es-toolkit** | Lodash现代替代者 | 比Lodash小 **97%** | ✅ 内置100%覆盖 | **极快**（2-11x Lodash） | 开箱即用 | 非常活跃（Toss维护） | ~150万+ | ~20K+ |
+| **Radashi** | Radash社区分支 | 与Radash相近 | ✅ 改进的类型 | 良好 | 优秀 | 非常活跃（社区驱动） | 增长中 | ~2K+ |
+| **Remeda** | TS-first工具库 | ~2.8MB | ✅ 一流支持 | 中等（惰性求值） | 支持 | 活跃 | ~50万+ | ~5.4K |
+| **ModernDash** | TS-first Lodash替代 | 极小 | ✅ 严格模式无any | 超越Lodash | 优秀 | 活跃 | 较少 | ~500+ |
+| **Just** | 独立微型工具集 | 每个包独立极小 | ✅ 每个包有类型 | 原生级别 | 天然支持 | 活跃 | 各包不同 | ~3K |
+| **FxTS** | FP + 并发处理 | 中等 | ✅ 完全支持 | 高效（惰性求值） | 支持 | 活跃 | ~10万+ | ~1.2K |
+| **Rambda** | Ramda极速版 | 极小 | 有支持 | **极快** | 支持 | 活跃 | ~50万+ | ~2K |
+| **ts-belt** | ReScript风格FP | 小 | 优秀 | 极快 | 支持 | 活跃 | ~10万+ | ~1.2K |
+
+---
+
+## 🔍 各库详细优劣
+
+### 1. Lodash
+
+**优势：**
+- 功能最全面，覆盖几乎所有数据操作场景
+- 生态最成熟，文档丰富，社区庞大（周下载7400万+）
+- 兼容性最好，支持旧浏览器（IE11+）
+- 提供 `lodash/fp` 函数式编程版本
+
+**劣势：**
+- 包体积大，函数间存在隐式依赖，tree-shaking效果有限
+- 基于ES5语法，代码冗长，难以阅读源码
+- TypeScript类型需要额外安装 `@types/lodash`
+- 大量功能已被原生ES6+取代（map/filter/reduce等）
+- 维护更新缓慢，2026年仍有原型污染漏洞（CVE-2026-2950）
+- 性能在现代环境中已非最优
+
+---
+
+### 2. Ramda
+
+**优势：**
+- 纯函数式编程设计，自动柯里化
+- 数据后置（data-last）便于函数组合
+- 丰富的函数组合工具（compose, pipe, converge等）
+- 成熟的函数式编程生态，社区稳定
+
+**劣势：**
+- TypeScript类型推断差，类型支持被长期忽视
+- `pipe` 语法不自然：`pipe(fn1, fn2)(value)` 需额外调用
+- 学习曲线陡峭，需要函数式编程思维
+- 包体积较大（~1.2MB）
+- 性能在同类库中一般
+- 不适合不熟悉FP的团队快速上手
+
+---
+
+### 3. Radash
+
+**优势：**
+- 零依赖，包体积极小（~4.8KB gzipped，仅为Lodash的1/5）
+- 原生TypeScript编写，类型安全，类型守卫（type guards）真正可用
+- 去除过时函数（如原生已支持的map/filter），不重复造轮子
+- 异步工具优秀：`parallel`（并发控制）、`tryit`（错误处理）
+- 源代码极简（如 `range` 仅3行），可直接复制到项目中使用
+- 性能优于Lodash 
+
+**劣势：**
+- 原作者 Ray Epps 已停止维护，项目处于社区接管过渡期
+- 功能覆盖不如Lodash全面
+- 某些API与Lodash不兼容，迁移需适配
+- 社区相对较小，第三方资源有限
+
+---
+
+### 4. es-toolkit ⭐ 最推荐
+
+**优势：**
+- **性能极快**：平均比Lodash快2-3倍，`omit` 快11.8倍，`pick` 快3.43倍 
+- **包体积极小**：单个函数仅88-800字节，比Lodash小97% 
+- **完全兼容Lodash**：提供 `es-toolkit/compat` 层，可无缝替换
+- 内置TypeScript支持，100%测试覆盖率
+- Toss公司（韩国独角兽，类似支付宝）维护，资金有保障
+- 周下载量150万+，被Storybook、Recharts、CKEditor等使用 
+- 提供AI集成（Claude Code、Cursor、Copilot插件）
+
+**劣势：**
+- 相对较新（2024年发布），长期稳定性待观察
+- 某些边缘功能可能不如Lodash完善
+- 社区生态仍在建设中
+
+---
+
+### 5. Radashi
+
+**优势：**
+- Radash的活跃社区分支，持续迭代改进
+- 改进了Radash的类型定义和工具链（Vitest + Biome + PNPM）
+- 社区驱动，接受PR速度快，有自动发布流程（patch/beta/next）
+- 向后兼容Radash，迁移平滑
+- 提供JSR.io包支持，方便Deno用户 
+
+**劣势：**
+- 知名度较低，Stars仅~2K
+- 生态和文档不如es-toolkit完善
+- 作为分支项目，长期路线图不确定
+
+---
+
+### 6. Remeda
+
+**优势：**
+- 第一个同时支持 **data-first** 和 **data-last** 的TypeScript工具库
+- 一流的TypeScript支持，类型推断精准（如 `map` 可推断出tuple类型）
+- 惰性求值（lazy evaluation）提升大数据处理性能
+- 完全用TypeScript编写，类型即API
+- 支持CJS/ESM/Deno/JSR多平台 
+
+**劣势：**
+- 性能在同类库中偏慢（比Rambda/ts-belt慢）
+- 包体积较大（~2.8MB）
+- 惰性求值在管道中使用有时不够直观
+- 学习曲线比Lodash陡
+
+---
+
+### 7. ModernDash
+
+**优势：**
+- TypeScript严格模式，**无 `any` 类型**
+- 现代浏览器优化，性能超越Lodash
+- 100%测试覆盖率，零运行时依赖
+- 不重复原生JavaScript功能，保持精简 
+
+**劣势：**
+- 功能覆盖有限（只包含有价值的工具）
+- 社区很小，知名度低
+- 不支持旧版Node.js（要求>=20.x）
+
+---
+
+### 8. Just
+
+**优势：**
+- 每个工具**独立成包**（如 `just-clone`、`just-debounce`），按需安装
+- 零依赖，每个包都极小（部分仅几十字节）
+- 支持ES5+浏览器
+- 每个包都有TypeScript定义 
+
+**劣势：**
+- 需要安装多个包才能满足需求，管理成本高
+- 没有统一的命名空间
+- 没有管道/链式调用支持
+- 不适合需要大量工具函数的项目
+
+---
+
+### 9. FxTS
+
+**优势：**
+- 惰性求值处理大数据/无限序列
+- 强大的**并发请求控制**（`concurrent` 函数）
+- 遵循Iterable/AsyncIterable标准协议
+- 支持管道和链式两种风格 
+
+**劣势：**
+- 专注函数式编程场景，通用工具较少
+- 学习曲线较陡
+- 不适合只需要简单工具函数的场景
+
+---
+
+### 10. Rambda
+
+**优势：**
+- **极快的性能**（最难被超越）
+- 包体积极小
+- Ramda API兼容
+
+**劣势：**
+- 功能覆盖不如Ramda全面
+- TypeScript支持仍有改进空间
+- 社区较小
+
+---
+
+### 11. ts-belt
+
+**优势：**
+- ReScript风格API，类型安全
+- 性能极快（比Remeda/Ramda快）
+- data-first设计更直观 
+
+**劣势：**
+- ReScript风格可能不适合所有开发者
+- 社区较小，文档相对有限
+
+---
+
+## 🎯 选型建议
+
+| 场景 | 推荐库 | 理由 |
+|---|---|---|
+| **从Lodash迁移** | **es-toolkit** | API兼容，改一行import即可，性能提升2-11倍 |
+| **全新TypeScript项目** | **es-toolkit** 或 **Radashi** | 现代、高性能、类型安全、社区活跃 |
+| **函数式编程项目** | **Ramda** 或 **FxTS** | FP范式支持完善，函数组合能力强 |
+| **需要惰性求值** | **Remeda** 或 **FxTS** | 内置lazy evaluation，大数据友好 |
+| **对包大小极度敏感** | **Just** 或 **es-toolkit** | 按需加载或极小体积 |
+| **遗留项目维护** | **Lodash** | 兼容性最好，文档最全，风险最低 |
+| **需要并发控制** | **FxTS** | 内置concurrent控制，异步管道优秀 |
+| **喜欢Ramda但嫌慢** | **Rambda** | 相同API，极致速度 |
+| **ReScript风格偏好** | **ts-belt** | 类型安全+高性能 |
+| **现代浏览器only** | **ModernDash** | 专为现代环境优化，严格TS |
+
+---
+
+## 📈 趋势观察
+
+1. **Lodash正在衰退**：虽然仍是下载量之王，但越来越多的项目开始迁移到现代替代方案，2025年已有文章建议'告别Lodash' 
+2. **es-toolkit崛起最快**：由Toss公司背书，API兼容+极致性能，是2025-2026年最热门的Lodash替代者，已发起与Lodash社区的协作迁移倡议 
+3. **TypeScript-first成为标配**：新库都原生支持TypeScript，Lodash的后装类型模式已过时
+4. **函数式编程库分化**：Ramda保持经典，Remeda/ts-belt/Rambda在TypeScript+性能方向竞争
+5. **社区驱动模式**：Radashi证明社区可以成功接管并改进项目，成为可持续的维护模式
+
+---
+
+## 推荐2
+
+### 一、 五大主流工具库深度对比
+
+#### 1. Lodash
+*   **简介**：诞生于 ES5 时代，前端工具库的“瑞士军刀”，拥有最庞大的生态。">
+<meta property="og:title" content="js 实用函数库">
+<meta property="og:description" content="
+
+## 对比1
+---
+
+## 📊 核心库对比总览
+
+| 库 | 定位 | 包大小 | TypeScript | 性能 | Tree-shaking | 维护状态 | 周下载量 | Stars |
+|---|---|---|---|---|---|---|---|---|
+| **Lodash** | 传统全能型 | ~24KB core / ~69KB full | 需额外安装 @types | 中等（兼容优先） | 支持（lodash-es） | 成熟但更新缓慢 | ~7400万 | ~61K |
+| **Ramda** | 函数式编程 | ~1.2MB | 类型推断差 | 中等 | 支持 | 活跃 | ~1080万 | ~24K |
+| **Radash** | 现代轻量工具库 | ~4.8KB gzipped | ✅ 原生支持 | 良好 | 优秀 | 原作者停止，社区接管中 | ~10万+ | ~4.8K |
+| **es-toolkit** | Lodash现代替代者 | 比Lodash小 **97%** | ✅ 内置100%覆盖 | **极快**（2-11x Lodash） | 开箱即用 | 非常活跃（Toss维护） | ~150万+ | ~20K+ |
+| **Radashi** | Radash社区分支 | 与Radash相近 | ✅ 改进的类型 | 良好 | 优秀 | 非常活跃（社区驱动） | 增长中 | ~2K+ |
+| **Remeda** | TS-first工具库 | ~2.8MB | ✅ 一流支持 | 中等（惰性求值） | 支持 | 活跃 | ~50万+ | ~5.4K |
+| **ModernDash** | TS-first Lodash替代 | 极小 | ✅ 严格模式无any | 超越Lodash | 优秀 | 活跃 | 较少 | ~500+ |
+| **Just** | 独立微型工具集 | 每个包独立极小 | ✅ 每个包有类型 | 原生级别 | 天然支持 | 活跃 | 各包不同 | ~3K |
+| **FxTS** | FP + 并发处理 | 中等 | ✅ 完全支持 | 高效（惰性求值） | 支持 | 活跃 | ~10万+ | ~1.2K |
+| **Rambda** | Ramda极速版 | 极小 | 有支持 | **极快** | 支持 | 活跃 | ~50万+ | ~2K |
+| **ts-belt** | ReScript风格FP | 小 | 优秀 | 极快 | 支持 | 活跃 | ~10万+ | ~1.2K |
+
+---
+
+## 🔍 各库详细优劣
+
+### 1. Lodash
+
+**优势：**
+- 功能最全面，覆盖几乎所有数据操作场景
+- 生态最成熟，文档丰富，社区庞大（周下载7400万+）
+- 兼容性最好，支持旧浏览器（IE11+）
+- 提供 `lodash/fp` 函数式编程版本
+
+**劣势：**
+- 包体积大，函数间存在隐式依赖，tree-shaking效果有限
+- 基于ES5语法，代码冗长，难以阅读源码
+- TypeScript类型需要额外安装 `@types/lodash`
+- 大量功能已被原生ES6+取代（map/filter/reduce等）
+- 维护更新缓慢，2026年仍有原型污染漏洞（CVE-2026-2950）
+- 性能在现代环境中已非最优
+
+---
+
+### 2. Ramda
+
+**优势：**
+- 纯函数式编程设计，自动柯里化
+- 数据后置（data-last）便于函数组合
+- 丰富的函数组合工具（compose, pipe, converge等）
+- 成熟的函数式编程生态，社区稳定
+
+**劣势：**
+- TypeScript类型推断差，类型支持被长期忽视
+- `pipe` 语法不自然：`pipe(fn1, fn2)(value)` 需额外调用
+- 学习曲线陡峭，需要函数式编程思维
+- 包体积较大（~1.2MB）
+- 性能在同类库中一般
+- 不适合不熟悉FP的团队快速上手
+
+---
+
+### 3. Radash
+
+**优势：**
+- 零依赖，包体积极小（~4.8KB gzipped，仅为Lodash的1/5）
+- 原生TypeScript编写，类型安全，类型守卫（type guards）真正可用
+- 去除过时函数（如原生已支持的map/filter），不重复造轮子
+- 异步工具优秀：`parallel`（并发控制）、`tryit`（错误处理）
+- 源代码极简（如 `range` 仅3行），可直接复制到项目中使用
+- 性能优于Lodash 
+
+**劣势：**
+- 原作者 Ray Epps 已停止维护，项目处于社区接管过渡期
+- 功能覆盖不如Lodash全面
+- 某些API与Lodash不兼容，迁移需适配
+- 社区相对较小，第三方资源有限
+
+---
+
+### 4. es-toolkit ⭐ 最推荐
+
+**优势：**
+- **性能极快**：平均比Lodash快2-3倍，`omit` 快11.8倍，`pick` 快3.43倍 
+- **包体积极小**：单个函数仅88-800字节，比Lodash小97% 
+- **完全兼容Lodash**：提供 `es-toolkit/compat` 层，可无缝替换
+- 内置TypeScript支持，100%测试覆盖率
+- Toss公司（韩国独角兽，类似支付宝）维护，资金有保障
+- 周下载量150万+，被Storybook、Recharts、CKEditor等使用 
+- 提供AI集成（Claude Code、Cursor、Copilot插件）
+
+**劣势：**
+- 相对较新（2024年发布），长期稳定性待观察
+- 某些边缘功能可能不如Lodash完善
+- 社区生态仍在建设中
+
+---
+
+### 5. Radashi
+
+**优势：**
+- Radash的活跃社区分支，持续迭代改进
+- 改进了Radash的类型定义和工具链（Vitest + Biome + PNPM）
+- 社区驱动，接受PR速度快，有自动发布流程（patch/beta/next）
+- 向后兼容Radash，迁移平滑
+- 提供JSR.io包支持，方便Deno用户 
+
+**劣势：**
+- 知名度较低，Stars仅~2K
+- 生态和文档不如es-toolkit完善
+- 作为分支项目，长期路线图不确定
+
+---
+
+### 6. Remeda
+
+**优势：**
+- 第一个同时支持 **data-first** 和 **data-last** 的TypeScript工具库
+- 一流的TypeScript支持，类型推断精准（如 `map` 可推断出tuple类型）
+- 惰性求值（lazy evaluation）提升大数据处理性能
+- 完全用TypeScript编写，类型即API
+- 支持CJS/ESM/Deno/JSR多平台 
+
+**劣势：**
+- 性能在同类库中偏慢（比Rambda/ts-belt慢）
+- 包体积较大（~2.8MB）
+- 惰性求值在管道中使用有时不够直观
+- 学习曲线比Lodash陡
+
+---
+
+### 7. ModernDash
+
+**优势：**
+- TypeScript严格模式，**无 `any` 类型**
+- 现代浏览器优化，性能超越Lodash
+- 100%测试覆盖率，零运行时依赖
+- 不重复原生JavaScript功能，保持精简 
+
+**劣势：**
+- 功能覆盖有限（只包含有价值的工具）
+- 社区很小，知名度低
+- 不支持旧版Node.js（要求>=20.x）
+
+---
+
+### 8. Just
+
+**优势：**
+- 每个工具**独立成包**（如 `just-clone`、`just-debounce`），按需安装
+- 零依赖，每个包都极小（部分仅几十字节）
+- 支持ES5+浏览器
+- 每个包都有TypeScript定义 
+
+**劣势：**
+- 需要安装多个包才能满足需求，管理成本高
+- 没有统一的命名空间
+- 没有管道/链式调用支持
+- 不适合需要大量工具函数的项目
+
+---
+
+### 9. FxTS
+
+**优势：**
+- 惰性求值处理大数据/无限序列
+- 强大的**并发请求控制**（`concurrent` 函数）
+- 遵循Iterable/AsyncIterable标准协议
+- 支持管道和链式两种风格 
+
+**劣势：**
+- 专注函数式编程场景，通用工具较少
+- 学习曲线较陡
+- 不适合只需要简单工具函数的场景
+
+---
+
+### 10. Rambda
+
+**优势：**
+- **极快的性能**（最难被超越）
+- 包体积极小
+- Ramda API兼容
+
+**劣势：**
+- 功能覆盖不如Ramda全面
+- TypeScript支持仍有改进空间
+- 社区较小
+
+---
+
+### 11. ts-belt
+
+**优势：**
+- ReScript风格API，类型安全
+- 性能极快（比Remeda/Ramda快）
+- data-first设计更直观 
+
+**劣势：**
+- ReScript风格可能不适合所有开发者
+- 社区较小，文档相对有限
+
+---
+
+## 🎯 选型建议
+
+| 场景 | 推荐库 | 理由 |
+|---|---|---|
+| **从Lodash迁移** | **es-toolkit** | API兼容，改一行import即可，性能提升2-11倍 |
+| **全新TypeScript项目** | **es-toolkit** 或 **Radashi** | 现代、高性能、类型安全、社区活跃 |
+| **函数式编程项目** | **Ramda** 或 **FxTS** | FP范式支持完善，函数组合能力强 |
+| **需要惰性求值** | **Remeda** 或 **FxTS** | 内置lazy evaluation，大数据友好 |
+| **对包大小极度敏感** | **Just** 或 **es-toolkit** | 按需加载或极小体积 |
+| **遗留项目维护** | **Lodash** | 兼容性最好，文档最全，风险最低 |
+| **需要并发控制** | **FxTS** | 内置concurrent控制，异步管道优秀 |
+| **喜欢Ramda但嫌慢** | **Rambda** | 相同API，极致速度 |
+| **ReScript风格偏好** | **ts-belt** | 类型安全+高性能 |
+| **现代浏览器only** | **ModernDash** | 专为现代环境优化，严格TS |
+
+---
+
+## 📈 趋势观察
+
+1. **Lodash正在衰退**：虽然仍是下载量之王，但越来越多的项目开始迁移到现代替代方案，2025年已有文章建议'告别Lodash' 
+2. **es-toolkit崛起最快**：由Toss公司背书，API兼容+极致性能，是2025-2026年最热门的Lodash替代者，已发起与Lodash社区的协作迁移倡议 
+3. **TypeScript-first成为标配**：新库都原生支持TypeScript，Lodash的后装类型模式已过时
+4. **函数式编程库分化**：Ramda保持经典，Remeda/ts-belt/Rambda在TypeScript+性能方向竞争
+5. **社区驱动模式**：Radashi证明社区可以成功接管并改进项目，成为可持续的维护模式
+
+---
+
+## 推荐2
+
+### 一、 五大主流工具库深度对比
+
+#### 1. Lodash
+*   **简介**：诞生于 ES5 时代，前端工具库的“瑞士军刀”，拥有最庞大的生态。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zy1acg.github.io/post/js%20-shi-yong-han-shu-ku.html">
+<meta property="og:image" content="https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg">
+<title>js 实用函数库</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">js 实用函数库</h1>
+<div class="title-right">
+    <a href="https://zy1acg.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/zy1acg/zy1acg.github.io/issues/11" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h2>对比1</h2>
+<hr>
+<h2>📊 核心库对比总览</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>库</th>
+<th>定位</th>
+<th>包大小</th>
+<th>TypeScript</th>
+<th>性能</th>
+<th>Tree-shaking</th>
+<th>维护状态</th>
+<th>周下载量</th>
+<th>Stars</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Lodash</strong></td>
+<td>传统全能型</td>
+<td>~24KB core / ~69KB full</td>
+<td>需额外安装 <a class="user-mention notranslate" data-hovercard-type="organization" data-hovercard-url="/orgs/types/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/types">@types</a></td>
+<td>中等（兼容优先）</td>
+<td>支持（lodash-es）</td>
+<td>成熟但更新缓慢</td>
+<td>~7400万</td>
+<td>~61K</td>
+</tr>
+<tr>
+<td><strong>Ramda</strong></td>
+<td>函数式编程</td>
+<td>~1.2MB</td>
+<td>类型推断差</td>
+<td>中等</td>
+<td>支持</td>
+<td>活跃</td>
+<td>~1080万</td>
+<td>~24K</td>
+</tr>
+<tr>
+<td><strong>Radash</strong></td>
+<td>现代轻量工具库</td>
+<td>~4.8KB gzipped</td>
+<td>✅ 原生支持</td>
+<td>良好</td>
+<td>优秀</td>
+<td>原作者停止，社区接管中</td>
+<td>~10万+</td>
+<td>~4.8K</td>
+</tr>
+<tr>
+<td><strong>es-toolkit</strong></td>
+<td>Lodash现代替代者</td>
+<td>比Lodash小 <strong>97%</strong></td>
+<td>✅ 内置100%覆盖</td>
+<td><strong>极快</strong>（2-11x Lodash）</td>
+<td>开箱即用</td>
+<td>非常活跃（Toss维护）</td>
+<td>~150万+</td>
+<td>~20K+</td>
+</tr>
+<tr>
+<td><strong>Radashi</strong></td>
+<td>Radash社区分支</td>
+<td>与Radash相近</td>
+<td>✅ 改进的类型</td>
+<td>良好</td>
+<td>优秀</td>
+<td>非常活跃（社区驱动）</td>
+<td>增长中</td>
+<td>~2K+</td>
+</tr>
+<tr>
+<td><strong>Remeda</strong></td>
+<td>TS-first工具库</td>
+<td>~2.8MB</td>
+<td>✅ 一流支持</td>
+<td>中等（惰性求值）</td>
+<td>支持</td>
+<td>活跃</td>
+<td>~50万+</td>
+<td>~5.4K</td>
+</tr>
+<tr>
+<td><strong>ModernDash</strong></td>
+<td>TS-first Lodash替代</td>
+<td>极小</td>
+<td>✅ 严格模式无any</td>
+<td>超越Lodash</td>
+<td>优秀</td>
+<td>活跃</td>
+<td>较少</td>
+<td>~500+</td>
+</tr>
+<tr>
+<td><strong>Just</strong></td>
+<td>独立微型工具集</td>
+<td>每个包独立极小</td>
+<td>✅ 每个包有类型</td>
+<td>原生级别</td>
+<td>天然支持</td>
+<td>活跃</td>
+<td>各包不同</td>
+<td>~3K</td>
+</tr>
+<tr>
+<td><strong>FxTS</strong></td>
+<td>FP + 并发处理</td>
+<td>中等</td>
+<td>✅ 完全支持</td>
+<td>高效（惰性求值）</td>
+<td>支持</td>
+<td>活跃</td>
+<td>~10万+</td>
+<td>~1.2K</td>
+</tr>
+<tr>
+<td><strong>Rambda</strong></td>
+<td>Ramda极速版</td>
+<td>极小</td>
+<td>有支持</td>
+<td><strong>极快</strong></td>
+<td>支持</td>
+<td>活跃</td>
+<td>~50万+</td>
+<td>~2K</td>
+</tr>
+<tr>
+<td><strong>ts-belt</strong></td>
+<td>ReScript风格FP</td>
+<td>小</td>
+<td>优秀</td>
+<td>极快</td>
+<td>支持</td>
+<td>活跃</td>
+<td>~10万+</td>
+<td>~1.2K</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2>🔍 各库详细优劣</h2>
+<h3>1. Lodash</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>功能最全面，覆盖几乎所有数据操作场景</li>
+<li>生态最成熟，文档丰富，社区庞大（周下载7400万+）</li>
+<li>兼容性最好，支持旧浏览器（IE11+）</li>
+<li>提供 <code class="notranslate">lodash/fp</code> 函数式编程版本</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>包体积大，函数间存在隐式依赖，tree-shaking效果有限</li>
+<li>基于ES5语法，代码冗长，难以阅读源码</li>
+<li>TypeScript类型需要额外安装 <code class="notranslate">@types/lodash</code></li>
+<li>大量功能已被原生ES6+取代（map/filter/reduce等）</li>
+<li>维护更新缓慢，2026年仍有原型污染漏洞（<a title="CVE-2026-2950" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-f23m-r3pf-42rh/hovercard" href="https://github.com/advisories/GHSA-f23m-r3pf-42rh">CVE-2026-2950</a>）</li>
+<li>性能在现代环境中已非最优</li>
+</ul>
+<hr>
+<h3>2. Ramda</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>纯函数式编程设计，自动柯里化</li>
+<li>数据后置（data-last）便于函数组合</li>
+<li>丰富的函数组合工具（compose, pipe, converge等）</li>
+<li>成熟的函数式编程生态，社区稳定</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>TypeScript类型推断差，类型支持被长期忽视</li>
+<li><code class="notranslate">pipe</code> 语法不自然：<code class="notranslate">pipe(fn1, fn2)(value)</code> 需额外调用</li>
+<li>学习曲线陡峭，需要函数式编程思维</li>
+<li>包体积较大（~1.2MB）</li>
+<li>性能在同类库中一般</li>
+<li>不适合不熟悉FP的团队快速上手</li>
+</ul>
+<hr>
+<h3>3. Radash</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>零依赖，包体积极小（~4.8KB gzipped，仅为Lodash的1/5）</li>
+<li>原生TypeScript编写，类型安全，类型守卫（type guards）真正可用</li>
+<li>去除过时函数（如原生已支持的map/filter），不重复造轮子</li>
+<li>异步工具优秀：<code class="notranslate">parallel</code>（并发控制）、<code class="notranslate">tryit</code>（错误处理）</li>
+<li>源代码极简（如 <code class="notranslate">range</code> 仅3行），可直接复制到项目中使用</li>
+<li>性能优于Lodash</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>原作者 Ray Epps 已停止维护，项目处于社区接管过渡期</li>
+<li>功能覆盖不如Lodash全面</li>
+<li>某些API与Lodash不兼容，迁移需适配</li>
+<li>社区相对较小，第三方资源有限</li>
+</ul>
+<hr>
+<h3>4. es-toolkit ⭐ 最推荐</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li><strong>性能极快</strong>：平均比Lodash快2-3倍，<code class="notranslate">omit</code> 快11.8倍，<code class="notranslate">pick</code> 快3.43倍</li>
+<li><strong>包体积极小</strong>：单个函数仅88-800字节，比Lodash小97%</li>
+<li><strong>完全兼容Lodash</strong>：提供 <code class="notranslate">es-toolkit/compat</code> 层，可无缝替换</li>
+<li>内置TypeScript支持，100%测试覆盖率</li>
+<li>Toss公司（韩国独角兽，类似支付宝）维护，资金有保障</li>
+<li>周下载量150万+，被Storybook、Recharts、CKEditor等使用</li>
+<li>提供AI集成（Claude Code、Cursor、Copilot插件）</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>相对较新（2024年发布），长期稳定性待观察</li>
+<li>某些边缘功能可能不如Lodash完善</li>
+<li>社区生态仍在建设中</li>
+</ul>
+<hr>
+<h3>5. Radashi</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>Radash的活跃社区分支，持续迭代改进</li>
+<li>改进了Radash的类型定义和工具链（Vitest + Biome + PNPM）</li>
+<li>社区驱动，接受PR速度快，有自动发布流程（patch/beta/next）</li>
+<li>向后兼容Radash，迁移平滑</li>
+<li>提供JSR.io包支持，方便Deno用户</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>知名度较低，Stars仅~2K</li>
+<li>生态和文档不如es-toolkit完善</li>
+<li>作为分支项目，长期路线图不确定</li>
+</ul>
+<hr>
+<h3>6. Remeda</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>第一个同时支持 <strong>data-first</strong> 和 <strong>data-last</strong> 的TypeScript工具库</li>
+<li>一流的TypeScript支持，类型推断精准（如 <code class="notranslate">map</code> 可推断出tuple类型）</li>
+<li>惰性求值（lazy evaluation）提升大数据处理性能</li>
+<li>完全用TypeScript编写，类型即API</li>
+<li>支持CJS/ESM/Deno/JSR多平台</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>性能在同类库中偏慢（比Rambda/ts-belt慢）</li>
+<li>包体积较大（~2.8MB）</li>
+<li>惰性求值在管道中使用有时不够直观</li>
+<li>学习曲线比Lodash陡</li>
+</ul>
+<hr>
+<h3>7. ModernDash</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>TypeScript严格模式，<strong>无 <code class="notranslate">any</code> 类型</strong></li>
+<li>现代浏览器优化，性能超越Lodash</li>
+<li>100%测试覆盖率，零运行时依赖</li>
+<li>不重复原生JavaScript功能，保持精简</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>功能覆盖有限（只包含有价值的工具）</li>
+<li>社区很小，知名度低</li>
+<li>不支持旧版Node.js（要求&gt;=20.x）</li>
+</ul>
+<hr>
+<h3>8. Just</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>每个工具<strong>独立成包</strong>（如 <code class="notranslate">just-clone</code>、<code class="notranslate">just-debounce</code>），按需安装</li>
+<li>零依赖，每个包都极小（部分仅几十字节）</li>
+<li>支持ES5+浏览器</li>
+<li>每个包都有TypeScript定义</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>需要安装多个包才能满足需求，管理成本高</li>
+<li>没有统一的命名空间</li>
+<li>没有管道/链式调用支持</li>
+<li>不适合需要大量工具函数的项目</li>
+</ul>
+<hr>
+<h3>9. FxTS</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>惰性求值处理大数据/无限序列</li>
+<li>强大的<strong>并发请求控制</strong>（<code class="notranslate">concurrent</code> 函数）</li>
+<li>遵循Iterable/AsyncIterable标准协议</li>
+<li>支持管道和链式两种风格</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>专注函数式编程场景，通用工具较少</li>
+<li>学习曲线较陡</li>
+<li>不适合只需要简单工具函数的场景</li>
+</ul>
+<hr>
+<h3>10. Rambda</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li><strong>极快的性能</strong>（最难被超越）</li>
+<li>包体积极小</li>
+<li>Ramda API兼容</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>功能覆盖不如Ramda全面</li>
+<li>TypeScript支持仍有改进空间</li>
+<li>社区较小</li>
+</ul>
+<hr>
+<h3>11. ts-belt</h3>
+<p><strong>优势：</strong></p>
+<ul>
+<li>ReScript风格API，类型安全</li>
+<li>性能极快（比Remeda/Ramda快）</li>
+<li>data-first设计更直观</li>
+</ul>
+<p><strong>劣势：</strong></p>
+<ul>
+<li>ReScript风格可能不适合所有开发者</li>
+<li>社区较小，文档相对有限</li>
+</ul>
+<hr>
+<h2>🎯 选型建议</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐库</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>从Lodash迁移</strong></td>
+<td><strong>es-toolkit</strong></td>
+<td>API兼容，改一行import即可，性能提升2-11倍</td>
+</tr>
+<tr>
+<td><strong>全新TypeScript项目</strong></td>
+<td><strong>es-toolkit</strong> 或 <strong>Radashi</strong></td>
+<td>现代、高性能、类型安全、社区活跃</td>
+</tr>
+<tr>
+<td><strong>函数式编程项目</strong></td>
+<td><strong>Ramda</strong> 或 <strong>FxTS</strong></td>
+<td>FP范式支持完善，函数组合能力强</td>
+</tr>
+<tr>
+<td><strong>需要惰性求值</strong></td>
+<td><strong>Remeda</strong> 或 <strong>FxTS</strong></td>
+<td>内置lazy evaluation，大数据友好</td>
+</tr>
+<tr>
+<td><strong>对包大小极度敏感</strong></td>
+<td><strong>Just</strong> 或 <strong>es-toolkit</strong></td>
+<td>按需加载或极小体积</td>
+</tr>
+<tr>
+<td><strong>遗留项目维护</strong></td>
+<td><strong>Lodash</strong></td>
+<td>兼容性最好，文档最全，风险最低</td>
+</tr>
+<tr>
+<td><strong>需要并发控制</strong></td>
+<td><strong>FxTS</strong></td>
+<td>内置concurrent控制，异步管道优秀</td>
+</tr>
+<tr>
+<td><strong>喜欢Ramda但嫌慢</strong></td>
+<td><strong>Rambda</strong></td>
+<td>相同API，极致速度</td>
+</tr>
+<tr>
+<td><strong>ReScript风格偏好</strong></td>
+<td><strong>ts-belt</strong></td>
+<td>类型安全+高性能</td>
+</tr>
+<tr>
+<td><strong>现代浏览器only</strong></td>
+<td><strong>ModernDash</strong></td>
+<td>专为现代环境优化，严格TS</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2>📈 趋势观察</h2>
+<ol>
+<li><strong>Lodash正在衰退</strong>：虽然仍是下载量之王，但越来越多的项目开始迁移到现代替代方案，2025年已有文章建议"告别Lodash"</li>
+<li><strong>es-toolkit崛起最快</strong>：由Toss公司背书，API兼容+极致性能，是2025-2026年最热门的Lodash替代者，已发起与Lodash社区的协作迁移倡议</li>
+<li><strong>TypeScript-first成为标配</strong>：新库都原生支持TypeScript，Lodash的后装类型模式已过时</li>
+<li><strong>函数式编程库分化</strong>：Ramda保持经典，Remeda/ts-belt/Rambda在TypeScript+性能方向竞争</li>
+<li><strong>社区驱动模式</strong>：Radashi证明社区可以成功接管并改进项目，成为可持续的维护模式</li>
+</ol>
+<hr>
+<h2>推荐2</h2>
+<h3>一、 五大主流工具库深度对比</h3>
+<h4>1. Lodash</h4>
+<ul>
+<li><strong>简介</strong>：诞生于 ES5 时代，前端工具库的“瑞士军刀”，拥有最庞大的生态。</li>
+<li><strong>优势</strong>：
+<ul>
+<li><strong>功能极其全面</strong>：提供 300+ 实用函数，几乎覆盖所有复杂数据处理需求（如深拷贝、链式调用）。</li>
+<li><strong>生态与兼容性无敌</strong>：社区支持最完善，且完美兼容 IE11 等老旧浏览器。</li>
+</ul>
+</li>
+<li><strong>劣势</strong>：
+<ul>
+<li><strong>体积臃肿</strong>：底层基于 ES5 语法，内部交叉引用导致 Tree-Shaking 不友好，即使按需引入也容易打包冗余代码。</li>
+<li><strong>类型支持滞后</strong>：原生不支持 TS，依赖社区维护的 <code class="notranslate">@types/lodash</code>，容易出现类型报错。</li>
+</ul>
+</li>
+</ul>
+<h4>2. Ramda</h4>
+<ul>
+<li><strong>简介</strong>：专注于“纯函数式编程（FP）”的工具库，强调不可变数据和函数组合。</li>
+<li><strong>优势</strong>：
+<ul>
+<li><strong>极致的 FP 范式</strong>：所有函数默认全参数柯里化，且严格遵循“数据最后（Data-last）”原则，极其适合 <code class="notranslate">compose</code> 和 <code class="notranslate">pipe</code> 组合。</li>
+<li><strong>声明式代码</strong>：能写出高度抽象、无副作用的数据转换管道。</li>
+</ul>
+</li>
+<li><strong>劣势</strong>：
+<ul>
+<li><strong>学习曲线陡峭</strong>：对不熟悉 FP 概念的开发者极不友好，过度抽象可能导致调试困难。</li>
+<li><strong>性能与体积开销</strong>：完整的函数式抽象带来了额外的性能损耗，完整包体积约 30KB，大于许多现代工具库。</li>
+</ul>
+</li>
+</ul>
+<h4>3. Radash</h4>
+<ul>
+<li><strong>简介</strong>：一个零依赖、TypeScript 优先的现代化轻量级工具库。</li>
+<li><strong>优势</strong>：
+<ul>
+<li><strong>现代化与高性能</strong>：基于现代 JS 特性，提供 Lodash 没有的新功能（如 <code class="notranslate">tryit</code>, <code class="notranslate">retry</code>），性能优异。</li>
+<li><strong>轻量与 TS 友好</strong>：体积仅为 Lodash 的五分之一，提供开箱即用的精准类型推断。</li>
+</ul>
+</li>
+<li><strong>劣势</strong>：
+<ul>
+<li><strong>已停止维护</strong>：原作者因精力原因于 2023 年 9 月停止维护，不再有新功能和安全更新。</li>
+</ul>
+</li>
+</ul>
+<h4>4. Radashi</h4>
+<ul>
+<li><strong>简介</strong>：Radash 的活跃社区分叉（Fork）版本，被称为“继承且超越”的下一代工具库。</li>
+<li><strong>优势</strong>：
+<ul>
+<li><strong>持续活跃</strong>：社区维护积极，有严格的性能门禁和体积守护（新增函数大于 1KB 即触发 review）。</li>
+<li><strong>无缝迁移</strong>：API 与 Radash 高度一致，只需全局替换 <code class="notranslate">from 'radash'</code> 为 <code class="notranslate">from 'radashi'</code> 即可零成本切换。</li>
+</ul>
+</li>
+<li><strong>劣势</strong>：
+<ul>
+<li><strong>生态仍在建设</strong>：作为较新的分支，其生态完善度短时间内难以补齐 Lodash 的差距。</li>
+</ul>
+</li>
+</ul>
+<h4>5. es-toolkit</h4>
+<ul>
+<li><strong>简介</strong>：旨在以极低迁移成本替代 Lodash 的现代工具库。</li>
+<li><strong>优势</strong>：
+<ul>
+<li><strong>极致瘦身与提速</strong>：相比 Lodash，整体体积缩小高达 97%，执行效率提升 2-3 倍。</li>
+<li><strong>平滑迁移</strong>：提供与 Lodash 高度兼容的 API 和一键迁移方案，无需承担过高迁移风险。</li>
+</ul>
+</li>
+<li><strong>劣势</strong>：
+<ul>
+<li><strong>功能覆盖有取舍</strong>：为了极致瘦身，删减了 Lodash 中的冷门接口，部分小众 API 功能未做到完整对齐。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3>二、 其他值得关注的同类工具库</h3>
+<p>除了上述五个，还有以下优秀的工具库可以作为补充或替代：</p>
+<h4>1. Rambda</h4>
+<ul>
+<li><strong>简介</strong>：早期定位为 Ramda 的替代品，现已专注于 TypeScript 优化和轻量级实现。</li>
+<li><strong>优势</strong>：包体积极小（核心约 8KB，仅为 Ramda 的 27%），执行速度比 Ramda 快 15-30%，且原生支持 TS 类型推导。</li>
+<li><strong>劣势</strong>：放弃了全参数柯里化（仅对前两个参数生效），无法完全作为 Ramda 的 Drop-in 替代品。</li>
+</ul>
+<h4>2. moderndash</h4>
+<ul>
+<li><strong>简介</strong>：针对大型企业级应用重构的高频函数现代化集合。</li>
+<li><strong>优势</strong>：剔除了 Lodash 的冷门功能，大幅降低团队学习成本，代码稳定性和测试覆盖率极高。</li>
+<li><strong>劣势</strong>：仅支持 ES2020+ 浏览器，完全无法兼容 IE11 等旧浏览器。</li>
+</ul>
+<h4>3. lodash-es</h4>
+<ul>
+<li><strong>简介</strong>：Lodash 官方提供的 ES Module 版本。</li>
+<li><strong>优势</strong>：对 Lodash API 有极强的依赖，不愿修改任何代码逻辑时的最佳选择；完美支持 Tree-Shaking。</li>
+<li><strong>劣势</strong>：底层依然是 ES5 时代的“老包袱”，无法享受现代 JS 引擎的性能红利。</li>
+</ul>
+<h4>4. 原生 JavaScript (ES2020+)</h4>
+<ul>
+<li><strong>简介</strong>：直接使用浏览器内置 API。</li>
+<li><strong>优势</strong>：零依赖、零体积、性能天花板。现代语法（如 <code class="notranslate">structuredClone</code>、可选链 <code class="notranslate">?.</code>）已能覆盖 Lodash 80% 的日常用例。</li>
+<li><strong>劣势</strong>：缺乏针对复杂场景的封装（如深比较、复杂分组），需要开发者自行处理边界情况。</li>
+</ul>
+<hr>
+<h3>三、 总结与选型建议</h3>
+<ul>
+<li><strong>新项目/性能敏感</strong>：优先选择 <strong>Radashi</strong> 或 <strong>es-toolkit</strong>。前者适合追求极致性能和零依赖的现代应用，后者适合希望无痛替换 Lodash 的项目。</li>
+<li><strong>重度函数式编程</strong>：如果团队推崇 FP 范式，选择 <strong>Ramda</strong>（追求纯粹）或 <strong>Rambda</strong>（追求轻量与 TS 友好）。</li>
+<li><strong>老旧项目/兼容 IE</strong>：继续使用 <strong>Lodash</strong> 或 <strong>lodash-es</strong>，不要盲目升级。</li>
+<li><strong>企业级求稳</strong>：可以考虑 <strong>moderndash</strong>，用精简实用的 API 降低维护成本。</li>
+</ul>
+<hr>
+<h2>推荐3</h2>
+<h3>1. Lodash</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>函数最全（数组、对象、集合、函数、字符串等数百个），久经考验，生态和社区极其庞大</td>
+<td>整包体积较大（约 70 kB gzipped），tree-shaking 后仍可能残留内部依赖</td>
+</tr>
+<tr>
+<td>提供 <code class="notranslate">lodash/fp</code> 变体，支持不可变、自动柯里化、迭代器优先的函数式风格</td>
+<td>许多函数已被 ES6+ 原生替代（如 <code class="notranslate">map</code>、<code class="notranslate">find</code>），继续使用会带来冗余</td>
+</tr>
+<tr>
+<td>可按需加载（<code class="notranslate">import map from 'lodash/map'</code>），文档丰富且有中文资源</td>
+<td>默认方法会修改原数组/对象，参数顺序（数据在前）不利于函数组合；类型定义需额外安装 <code class="notranslate">@types/lodash</code></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>2. Ramda</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>专为函数式编程设计：所有函数自动柯里化，数据放在最后，完美适配 <code class="notranslate">pipe</code>/<code class="notranslate">compose</code></td>
+<td>学习曲线很陡，概念抽象（Point-free、Lens、Transducer 等），对团队要求高</td>
+</tr>
+<tr>
+<td>纯函数、不可变操作，不会副作用修改原数据</td>
+<td>体积同样不小（约 50 kB gzipped），在大量数据处理时性能可能不如命令式或原生方法</td>
+</tr>
+<tr>
+<td>API 设计高度一致，逻辑性强，适合构建复杂的数据流</td>
+<td>部分高级特性实际使用频率低，容易造成过度抽象，降低代码可读性</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>3. Radash（原版，已停更）</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>完全 TypeScript 编写，零依赖，类型安全</td>
+<td>函数数量少（约 90 个），不能覆盖 Lodash 的常用场景</td>
+</tr>
+<tr>
+<td>极其轻量（全量约 10 kB gzipped），天然 ES 模块与 tree-shaking 友好</td>
+<td>项目已停止维护，存在未修复的 bug，最终被重命名为 Radashi</td>
+</tr>
+<tr>
+<td>设计理念“不与原生抢活”，只补充 ES 缺少的工具（如 <code class="notranslate">tryit</code>, <code class="notranslate">retry</code>, <code class="notranslate">parallel</code>）</td>
+<td>社区极小，文档和示例不足，不建议在新项目中直接使用</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>4. es-toolkit</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>性能非常突出（官方称部分函数比 lodash 快 2-3 倍），且按需打包后几乎无额外体积</td>
+<td>项目很新（2024 年发布），API 可能变动，生产环境使用需评估稳定性风险</td>
+</tr>
+<tr>
+<td>完整的 TypeScript 支持，提供 <code class="notranslate">es-toolkit/compat</code> 兼容层，可快速替换 lodash</td>
+<td>函数覆盖度仍不及 Lodash，一些冷门功能尚缺</td>
+</tr>
+<tr>
+<td>积极维护，设计现代，颗粒度极细，tree-shaking 达到最优</td>
+<td>社区极小，教程与问题解答很少，遇到问题只能看源码</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>5. Radashi（Radash 的社区继任版）</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>延续了 Radash 的所有优点：TypeScript 优先、轻量、零依赖、现代 API</td>
+<td>与 Radash 存在不兼容的破坏性变更，老项目迁移需改代码</td>
+</tr>
+<tr>
+<td>由社区积极维护，持续修复问题、增加新函数，文档也在完善</td>
+<td>版本仍可能 &lt; 1.0，API 未来仍有调整可能</td>
+</tr>
+<tr>
+<td>拆包友好，适合在 TS 项目中作为轻量补充</td>
+<td>函数总数仍然偏少，不能做 Lodash 的全功能替代</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<blockquote>
+<p>注：Radash 已停止开发，官方建议迁移到 Radashi，可以把 Radashi 看成 Radash 的重命名升级版。</p>
+</blockquote>
+<hr>
+<h3>其他同类实用函数工具库</h3>
+<p><strong>1. Underscore.js</strong></p>
+<ul>
+<li><strong>优点</strong>：Lodash 的前身，极简稳定，体积小，适合轻量需求或旧项目兼容。</li>
+<li><strong>缺点</strong>：功能比 Lodash 少很多，不支持 tree-shaking，基本停止演进，不推荐新项目使用。</li>
+</ul>
+<p><strong>2. Rambda</strong></p>
+<ul>
+<li><strong>优点</strong>：Ramda 的 TypeScript 重写版，更快、更小，API 大部分兼容 Ramda，自动柯里化且数据最后。</li>
+<li><strong>缺点</strong>：缺少 Ramda 某些高级特性（如 lens），生态和知名度较小，更新速度不如 Ramda。</li>
+</ul>
+<p><strong>3. Remeda</strong></p>
+<ul>
+<li><strong>优点</strong>：TypeScript 优先设计，同时支持 data-first 和 data-last 风格，支持惰性求值，与 Lodash 一样可链式调用也可 pipe。</li>
+<li><strong>缺点</strong>：学习成本中等，社区还不算大，但质量很高，正在快速成长。</li>
+</ul>
+<p><strong>4. ts-belt</strong></p>
+<ul>
+<li><strong>优点</strong>：专为 TypeScript 打造的函数式工具库，提供 <code class="notranslate">Option</code>、<code class="notranslate">Result</code> 等健壮类型，零依赖，tree-shaking 出色，类型极度安全。</li>
+<li><strong>缺点</strong>：引入了新的编程范式，函数名多且需要理解函数式容器，对习惯命令式的开发者不友好。</li>
+</ul>
+<p><strong>5. lazy.js</strong></p>
+<ul>
+<li><strong>优点</strong>：惰性计算序列，处理大型或无限数据集时内存和性能优势明显，API 风格类似 Lodash 链式调用。</li>
+<li><strong>缺点</strong>：专注于集合操作，不是全功能工具库，项目已长期停滞，不适合作为通用库。</li>
+</ul>
+<p><strong>6. just (系列小包)</strong></p>
+<ul>
+<li><strong>优点</strong>：每个函数独立为 npm 包（如 <code class="notranslate">just-omit</code>、<code class="notranslate">just-clone</code>），体积达到理论最小，按需使用极致优化。</li>
+<li><strong>缺点</strong>：缺乏统一文档和聚合入口，管理多个小包繁琐，不适合需要大量工具的场景。</li>
+</ul>
+<p><strong>7. micro-dash</strong></p>
+<ul>
+<li><strong>优点</strong>：Lodash 的精简子集，只提供最常用函数，打包体积很小。</li>
+<li><strong>缺点</strong>：功能太少，维护可能不积极，容易被 lodash-es + 深度 tree-shaking 替代。</li>
+</ul>
+<p><strong>8. fp-ts</strong></p>
+<ul>
+<li><strong>优点</strong>：为 TypeScript 提供高级函数式编程类型与工具（<code class="notranslate">Option</code>、<code class="notranslate">Either</code>、<code class="notranslate">Task</code> 等），类型安全性极高，适合编写健壮的业务逻辑。</li>
+<li><strong>缺点</strong>：概念密集，学习曲线极为陡峭，严格来说不是“通用工具库”而是函数式框架，用来替代 Lodash/Ramda 需要完全改变编程范式。</li>
+</ul>
+<hr>
+<h3>简单选择建议</h3>
+<ul>
+<li><strong>全面、稳定、兼容第一</strong> → <strong>Lodash</strong>（可配合 <code class="notranslate">lodash-es</code> 做 tree-shaking，并逐步用原生方法替换）</li>
+<li><strong>纯粹函数式、数据流组合</strong> → <strong>Ramda</strong> 或 <strong>Rambda</strong>（后者更轻快，TS 原生更好）</li>
+<li><strong>TypeScript 原生体验、轻量、现代</strong> → <strong>es-toolkit</strong>（激进追新）或 <strong>Radashi</strong>（保守够用），二者可以互补 Lodash</li>
+<li><strong>追求极致类型安全+函数式</strong> → <strong>Remeda</strong>、<strong>ts-belt</strong></li>
+<li><strong>大量数据处理/惰性求值</strong> → <strong>lazy.js</strong>（但注意其维护状态）</li>
+<li><strong>非全量，只想要几个零碎工具</strong> → <strong>just 系列</strong>小包</li>
+</ul>
+<p>可以根据项目的规模、团队技术栈以及对 bundle 体积的敏感度来组合使用，并不一定只选一个。</p>
+<h2>推荐4</h2>
+<h3>📊 核心工具库对比一览</h3>
+<p>先通过一个表格快速了解这几个核心工具库的关键特性：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th align="left">特性维度</th>
+<th align="left"><strong>Lodash</strong></th>
+<th align="left"><strong>Ramda</strong></th>
+<th align="left"><strong>Radash</strong></th>
+<th align="left"><strong>es-toolkit</strong></th>
+<th align="left"><strong>Radashi</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>核心设计哲学</strong></td>
+<td align="left">功能全面、链式调用、兼容旧环境【turn0search18】</td>
+<td align="left"><strong>函数式编程</strong>、自动柯里化、不可变数据【turn0search13】【turn0search16】</td>
+<td align="left">现代化、零依赖、类型安全【turn0search14】【turn0search27】</td>
+<td align="left"><strong>高性能</strong>、极致轻量、兼容Lodash【turn0search2】【turn0search6】</td>
+<td align="left">Radash的社区续作，<strong>性能怪兽</strong>、活跃维护【turn0search22】【turn0search26】</td>
+</tr>
+<tr>
+<td align="left"><strong>性能表现</strong></td>
+<td align="left">兼容性优先，相对较慢【turn0search9】</td>
+<td align="left">不可变操作有性能开销，通常慢于Lodash【turn0search11】</td>
+<td align="left"><strong>优秀</strong> (宣称比Lodash快1.5-2倍)【turn0search9】</td>
+<td align="left"><strong>卓越</strong> (宣称平均快2-3倍，部分函数11倍)【turn0search2】【turn0search5】</td>
+<td align="left"><strong>极致</strong> (宣称比Lodash快3-7倍)【turn0search9】【turn0search21】</td>
+</tr>
+<tr>
+<td align="left"><strong>包体积</strong></td>
+<td align="left">大 (全量~71KB，按需仍较大)【turn0search9】</td>
+<td align="left">中等 (~16KB gzip)【turn0search11】</td>
+<td align="left"><strong>极小</strong> (零依赖，Tree-Shaking友好)【turn0search14】</td>
+<td align="left"><strong>极小</strong> (比Lodash减少最高97%)【turn0search0】【turn0search2】</td>
+<td align="left"><strong>极小</strong> (比Lodash减少75%)【turn0search9】</td>
+</tr>
+<tr>
+<td align="left"><strong>TypeScript支持</strong></td>
+<td align="left">需额外安装<code class="notranslate">@types/lodash</code>，类型推断弱【turn0search9】</td>
+<td align="left"><strong>原生支持</strong>，类型推断优秀【turn0search11】</td>
+<td align="left"><strong>原生支持</strong>，零<code class="notranslate">any</code>【turn0search14】</td>
+<td align="left"><strong>原生支持</strong>，内置类型守卫 (如<code class="notranslate">isNotNil</code>)【turn0search2】【turn0search6】</td>
+<td align="left"><strong>原生支持</strong>，零<code class="notranslate">any</code>，类型体验佳【turn0search22】</td>
+</tr>
+<tr>
+<td align="left"><strong>Tree-Shaking友好度</strong></td>
+<td align="left"><strong>差</strong> (内部交叉引用多，按需引入仍可能打包大量辅助函数)【turn0search21】</td>
+<td align="left">中等 (支持按需引入)</td>
+<td align="left"><strong>优秀</strong> (ESM原生模块设计)【turn0search14】</td>
+<td align="left"><strong>优秀</strong> (天然支持，模块化设计)【turn0search2】【turn0search42】</td>
+<td align="left"><strong>优秀</strong> (ESM原生模块设计)【turn0search22】</td>
+</tr>
+<tr>
+<td align="left"><strong>维护状态</strong></td>
+<td align="left">更新缓慢，维护相对滞后【turn0search9】【turn0search21】</td>
+<td align="left">活跃</td>
+<td align="left"><strong>已归档</strong> (作者停止维护)【turn0search21】【turn0search25】</td>
+<td align="left"><strong>非常活跃</strong> (Toss公司维护，被知名项目采用)【turn0search2】【turn0search46】</td>
+<td align="left"><strong>非常活跃</strong> (社区接管，nightly发版)【turn0search22】【turn0search26】</td>
+</tr>
+<tr>
+<td align="left"><strong>API风格</strong></td>
+<td align="left">传统、链式调用</td>
+<td align="left">函数优先、数据最后</td>
+<td align="left"><strong>现代</strong>、简洁，部分函数名与Lodash不同</td>
+<td align="left"><strong>兼容Lodash</strong> (提供<code class="notranslate">compat</code>层)，API基本一致</td>
+<td align="left"><strong>现代</strong>、简洁，API与Lodash不同</td>
+</tr>
+<tr>
+<td align="left"><strong>迁移成本</strong></td>
+<td align="left">-</td>
+<td align="left"><strong>高</strong> (API风格差异大，需重写代码)【turn0search17】</td>
+<td align="left"><strong>高</strong> (API不同，需重写)【turn0search29】</td>
+<td align="left"><strong>极低</strong> (提供<code class="notranslate">compat</code>层，可无缝替换Lodash)【turn0search5】【turn0search9】</td>
+<td align="left"><strong>高</strong> (API不同，需重写)</td>
+</tr>
+<tr>
+<td align="left"><strong>适用场景</strong></td>
+<td align="left">老项目、需兼容IE、需要Lodash特定功能</td>
+<td align="left"><strong>函数式编程</strong>范式、追求代码可组合性与可预测性</td>
+<td align="left">新项目、追求<strong>极致轻量</strong>与<strong>类型安全</strong>、现代环境</td>
+<td align="left"><strong>从Lodash迁移</strong>、<strong>新项目</strong>、追求<strong>性能</strong>与<strong>体积</strong>、TypeScript项目</td>
+<td align="left">新项目或重构、追求<strong>极致性能</strong>、现代环境、社区活跃</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h3>🔍 各工具库深度解析</h3>
+<h4>1. Lodash：曾经的王者，时代的眼泪</h4>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>功能极其全面</strong>：提供了300多个经过实战检验的实用函数，覆盖数组、对象、字符串、函数等各个方面【turn0search18】。</li>
+<li><strong>链式调用优雅</strong>：支持<code class="notranslate">_.chain()</code>风格的链式操作，代码可读性好【turn0search18】。</li>
+<li><strong>兼容性无敌</strong>：支持IE11及以下浏览器，是老项目的可靠选择【turn0search1】【turn0search29】。</li>
+<li><strong>生态成熟稳定</strong>：拥有庞大的用户基础和丰富的学习资源。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li><strong>体积臃肿</strong>：全量引入体积巨大，即使按需引入，由于内部模块化设计不佳，Tree-Shaking效果不理想，容易打包大量冗余代码【turn0search0】【turn0search9】【turn0search21】。</li>
+<li><strong>性能瓶颈</strong>：基于兼容旧环境的设计，未充分利用现代JS引擎特性，性能相对较慢【turn0search9】。</li>
+<li><strong>TypeScript支持差</strong>：需要额外安装<code class="notranslate">@types/lodash</code>，且类型推断较弱，开发体验不佳【turn0search9】。</li>
+<li><strong>维护缓慢</strong>：更新频率低，大量功能已被ES6+原生API替代，却未精简【turn0search9】【turn0search21】。</li>
+</ul>
+<h4>2. Ramda：函数式编程的纯粹之选</h4>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>函数式编程典范</strong>：所有函数自动柯里化，参数顺序设计为便于函数组合（数据置后），天然支持Point-Free风格，代码更声明式、可组合、可测试【turn0search13】【turn0search16】。</li>
+<li><strong>不可变数据</strong>：所有操作都返回新对象，与React等现代框架的理念契合，避免副作用【turn0search11】。</li>
+<li><strong>类型推断优秀</strong>：TypeScript支持良好，类型推断准确【turn0search11】。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li><strong>学习曲线陡峭</strong>：对于不熟悉函数式编程的开发者来说，理解<code class="notranslate">compose</code>、<code class="notranslate">pipe</code>、<code class="notranslate">curry</code>等概念有较高门槛【turn0search17】。</li>
+<li><strong>性能开销</strong>：不可变操作和函数组合会带来一定的性能开销，通常慢于Lodash【turn0search11】。</li>
+<li><strong>API风格差异大</strong>：与Lodash的命令式风格完全不同，迁移成本极高【turn0search17】。</li>
+</ul>
+<h4>3. Radash：现代极简的探索者（已归档）</h4>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>零依赖</strong>：完全零依赖，包体积极小，Tree-Shaking友好【turn0search14】。</li>
+<li><strong>类型安全</strong>：原生TypeScript编写，类型完整安全【turn0search14】。</li>
+<li><strong>现代化API</strong>：基于ES6+特性，API设计简洁，部分函数（如<code class="notranslate">tryit</code>、<code class="notranslate">parallel</code>、<code class="notranslate">retry</code>）很实用【turn0search14】【turn0search27】。</li>
+<li><strong>源码可读性高</strong>：源码简洁易懂，便于学习和调试【turn0search25】【turn0search27】。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li><strong>已归档</strong>：作者因精力原因已停止维护，不再更新，存在安全隐患【turn0search21】【turn0search25】。</li>
+<li><strong>API不兼容Lodash</strong>：函数名和参数不同，迁移成本高【turn0search29】。</li>
+<li><strong>功能覆盖度</strong>：不如Lodash全面，一些冷门但有用的功能缺失。</li>
+</ul>
+<h4>4. es-toolkit：性能与兼容性的平衡大师</h4>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>性能怪兽</strong>：通过充分利用现代JS API（如<code class="notranslate">Set</code>、<code class="notranslate">Array.includes</code>）和优化算法，性能平均提升2-3倍，部分函数提升11倍【turn0search2】【turn0search5】。</li>
+<li><strong>体积极致</strong>：比Lodash减少最高97%的体积，单个函数体积甚至可小于100字节，极大优化加载速度【turn0search0】【turn0search2】。</li>
+<li><strong>兼容层平滑迁移</strong>：提供<code class="notranslate">es-toolkit/compat</code>子包，函数签名与Lodash镜像级一致，官方提供codemod脚本，可实现90%自动替换，迁移成本极低【turn0search1】【turn0search5】【turn0search9】。</li>
+<li><strong>TypeScript原生支持</strong>：内置完整类型定义，提供<code class="notranslate">isNotNil</code>等有用的类型守卫【turn0search2】【turn0search6】。</li>
+<li><strong>100%测试覆盖率</strong>：经过严格测试，稳定可靠【turn0search6】【turn0search8】。</li>
+<li><strong>被知名项目采用</strong>：已被Storybook、Recharts、CKEditor等流行开源项目采用【turn0search2】【turn0search46】。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li><strong>功能实现相对简单</strong>：为了追求性能和体积，部分函数（如<code class="notranslate">omit</code>）的实现比Lodash简单，不支持深层属性路径等复杂场景【turn0search3】。</li>
+<li><strong>API差异</strong>：原生API与Lodash略有不同（如<code class="notranslate">debounce</code>的取消机制使用<code class="notranslate">AbortController</code>），需要适应【turn0search3】。</li>
+</ul>
+<h4>5. Radashi：Radash的性能升级社区版</h4>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>极致性能</strong>：作为Radash的社区续作，采用ES2020全新算法，性能比Lodash快3-7倍，是“性能怪兽”【turn0search9】【turn0search21】。</li>
+<li><strong>活跃维护</strong>：社区接管后维护非常活跃，有nightly发版，RFC公开投票，持续优化【turn0search22】【turn0search26】。</li>
+<li><strong>零依赖与类型安全</strong>：继承Radash的优点，零依赖、原生TS、零<code class="notranslate">any</code>【turn0search22】。</li>
+<li><strong>现代API</strong>：API设计现代简洁，包含<code class="notranslate">tryit</code>、<code class="notranslate">parallel</code>、<code class="notranslate">retry</code>等实用函数【turn0search9】。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li><strong>API不兼容Lodash</strong>：与Lodash函数名和参数不同，迁移成本高，需重写代码【turn0search29】。</li>
+<li><strong>生态相对年轻</strong>：虽然发展迅速，但相比Lodash和es-toolkit，其生态和社区资源仍在积累中。</li>
+</ul>
+<hr>
+<h3>🧰 其他值得关注的同类工具库</h3>
+<p>除了上述五个，还有这些库也各有特色：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th align="left">库名</th>
+<th align="left">核心特点</th>
+<th align="left">优点</th>
+<th align="left">缺点</th>
+<th align="left">适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>lodash-es</strong>【turn0search1】【turn0search29】【turn0search49】</td>
+<td align="left">Lodash的<strong>官方ESM分支</strong>，API100%一致</td>
+<td align="left"><strong>迁移成本为零</strong>（只需替换导入路径）、支持<strong>Tree-Shaking</strong>、体积比Lodash减少一半</td>
+<td align="left">仍是传统实现，性能提升有限，TypeScript支持仍需额外配置</td>
+<td align="left"><strong>老项目迁移</strong>、想立即享受Tree-Shaking好处但不想改代码</td>
+</tr>
+<tr>
+<td align="left"><strong>moderndash</strong>【turn0search29】</td>
+<td align="left">保留Lodash函数名，<strong>内部用原生API重写</strong></td>
+<td align="left"><strong>迁移平滑</strong>（函数名95%一致）、性能提升2-4倍、体积减少70%、只保留高频70+函数</td>
+<td align="left">删减了冷门函数，可能不满足所有需求</td>
+<td align="left">想从Lodash迁移、希望减少学习成本、追求性能和体积</td>
+</tr>
+<tr>
+<td align="left"><strong>Underscore</strong>【turn0search30】【turn0search32】</td>
+<td align="left">Lodash的前身，更轻量</td>
+<td align="left">体积小（压缩后~4KB）、API简单</td>
+<td align="left">功能远不如Lodash丰富、性能未优化、社区已基本停滞</td>
+<td align="left">学习原理、极简项目</td>
+</tr>
+<tr>
+<td align="left"><strong>futil-js</strong>【turn0search10】</td>
+<td align="left">Lodash的<strong>函数式编程补充库</strong></td>
+<td align="left">为Lodash提供更友好的函数式接口</td>
+<td align="left">需配合Lodash使用、学习成本</td>
+<td align="left">已深度使用Lodash但想引入函数式编程</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h3>🧭 如何选择适合你的工具库</h3>
+<p>你可以根据下面的决策流程图，结合项目情况快速做出选择：</p>
+<div class="highlight highlight-source-mermaid"><pre class="notranslate"><span class="pl-k">flowchart</span> <span class="pl-c1">LR</span>
+    <span class="pl-ent">A</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>开始选择工具库<span class="pl-pds"><span class="pl-sg">]</span></span></span> <span class="pl-k">--&gt;</span> <span class="pl-ent">B</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">{</span></span>项目是全新项目吗?<span class="pl-pds"><span class="pl-sg">}</span></span></span>
+    
+    <span class="pl-ent">B</span> <span class="pl-k">--</span> <span class="pl-s">是</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">C</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">{</span></span>团队偏好函数式编程吗?<span class="pl-pds"><span class="pl-sg">}</span></span></span>
+    <span class="pl-ent">C</span> <span class="pl-k">--</span> <span class="pl-s">是</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">D</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>推荐 Ramda<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">C</span> <span class="pl-k">--</span> <span class="pl-s">否</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">E</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">{</span></span>追求极致性能与体积吗?<span class="pl-pds"><span class="pl-sg">}</span></span></span>
+    <span class="pl-ent">E</span> <span class="pl-k">--</span> <span class="pl-s">是</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">F</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>推荐 es-toolkit 或 Radashi<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">E</span> <span class="pl-k">--</span> <span class="pl-s">否</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">G</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>推荐 es-toolkit&lt;<span class="pl-ent">br</span>&gt;（兼容性更好）<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    
+    <span class="pl-ent">B</span> <span class="pl-k">--</span> <span class="pl-s">否（老项目迁移）</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">H</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">{</span></span>能接受较高的迁移成本吗?<span class="pl-pds"><span class="pl-sg">}</span></span></span>
+    <span class="pl-ent">H</span> <span class="pl-k">--</span> <span class="pl-s">是</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">I</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">{</span></span>主要诉求是什么?<span class="pl-pds"><span class="pl-sg">}</span></span></span>
+    <span class="pl-ent">I</span> <span class="pl-k">--</span> <span class="pl-s">极致性能</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">J</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>推荐 Radashi<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">I</span> <span class="pl-k">--</span> <span class="pl-s">函数式编程</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">K</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>推荐 Ramda<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    
+    <span class="pl-ent">H</span> <span class="pl-k">--</span> <span class="pl-s">否（需无缝迁移）</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">L</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">{</span></span>主要环境是?<span class="pl-pds"><span class="pl-sg">}</span></span></span>
+    <span class="pl-ent">L</span> <span class="pl-k">--</span> <span class="pl-s">需兼容IE11</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">M</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>推荐 Lodash&lt;<span class="pl-ent">br</span>&gt;（或 lodash-es）<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">L</span> <span class="pl-k">--</span> <span class="pl-s">现代浏览器</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">N</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>推荐 es-toolkit/compat&lt;<span class="pl-ent">br</span>&gt;或 lodash-es<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    
+    <span class="pl-ent">D</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">O</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>最终选择: Ramda<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">F</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">P</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>最终选择: es-toolkit 或 Radashi<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">G</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">Q</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>最终选择: es-toolkit<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">J</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">R</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>最终选择: Radashi<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">K</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">S</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>最终选择: Ramda<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">M</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">T</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>最终选择: Lodash<span class="pl-pds"><span class="pl-sg">]</span></span></span>
+    <span class="pl-ent">N</span> <span class="pl-k">--&gt;</span> <span class="pl-ent">U</span><span class="pl-s"><span class="pl-pds"><span class="pl-sg">[</span></span>最终选择: es-toolkit/compat<span class="pl-pds"><span class="pl-sg">]</span></span></span></pre></div>
+<h4>📋 简明选择建议</h4>
+<ul>
+<li><strong>新项目，追求性能、体积和开发体验</strong>：<strong>首选 es-toolkit</strong>。它平衡了性能、体积、类型安全和兼容性，迁移成本低，是大多数新项目的最佳选择。</li>
+<li><strong>新项目，追求极致性能且不惧迁移</strong>：可考虑 <strong>Radashi</strong>。性能怪兽，社区活跃，但API与Lodash不同，需重写代码。</li>
+<li><strong>新项目，坚定拥抱函数式编程</strong>：选择 <strong>Ramda</strong>。它是JS函数式编程的标杆，但学习曲线陡峭。</li>
+<li><strong>从Lodash迁移，不想改代码</strong>：
+<ul>
+<li>需兼容IE11：继续用 <strong>Lodash</strong> 或 <strong>lodash-es</strong>（后者支持Tree-Shaking）。</li>
+<li>现代环境：用 <strong>es-toolkit/compat</strong> 或 <strong>lodash-es</strong>。前者性能更好，后者迁移更无缝。</li>
+</ul>
+</li>
+<li><strong>从Lodash迁移，可接受少量代码改动</strong>：<strong>moderndash</strong> 是个不错的选择，迁移平滑且性能提升明显。</li>
+<li><strong>维护老项目，需兼容IE11</strong>：<strong>Lodash</strong> 仍是可靠选择。</li>
+<li><strong>学习函数式编程</strong>：从 <strong>Ramda</strong> 开始。</li>
+</ul>
+<blockquote>
+<p>💡 <strong>趋势提示</strong>：整个JS生态正在从“大而全”的Lodash转向“小而精”的现代工具库。<strong>es-toolkit</strong> 和 <strong>Radashi</strong> 代表了未来的方向，它们在性能、体积、类型安全等方面具有显著优势。对于新项目，强烈建议优先考虑它们。</p>
+</blockquote>
+<hr>
+<h3>💎 总结</h3>
+<p>选择工具库本质上是权衡：<strong>功能全面性</strong> vs <strong>性能与体积</strong>，<strong>迁移成本</strong> vs <strong>长期收益</strong>，<strong>学习曲线</strong> vs <strong>开发效率</strong>。</p>
+<ul>
+<li><strong>Lodash</strong> 已完成历史使命，新项目不推荐。</li>
+<li><strong>Ramda</strong> 是函数式编程的纯粹之选，但曲高和寡。</li>
+<li><strong>Radash</strong> 已归档，不建议新项目采用。</li>
+<li><strong>es-toolkit</strong> 是<strong>当前最推荐的“全能选手”</strong>，尤其适合从Lodash平滑迁移。</li>
+<li><strong>Radashi</strong> 是<strong>追求极致性能的“特种兵”</strong>，适合重构或新项目且不惧迁移成本。</li>
+</ul></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://zy1acg.github.io">Z's Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","zy1acg/zy1acg.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>
+
+</html>

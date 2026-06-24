@@ -1,5 +1,240 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Tue, 23 Jun 2026 07:41:41 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js 工具库</title><link>https://zy1acg.github.io/post/js%20-gong-ju-ku.html</link><description>## Time
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Z's Blog</title><link>https://zy1acg.github.io</link><description>Log fun things</description><copyright>Z's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg</url><title>avatar</title><link>https://zy1acg.github.io</link></image><lastBuildDate>Wed, 24 Jun 2026 05:17:46 +0000</lastBuildDate><managingEditor>Z's Blog</managingEditor><ttl>60</ttl><webMaster>Z's Blog</webMaster><item><title>js 实用函数库</title><link>https://zy1acg.github.io/post/js%20-shi-yong-han-shu-ku.html</link><description>
+
+## 对比1
+---
+
+## 📊 核心库对比总览
+
+| 库 | 定位 | 包大小 | TypeScript | 性能 | Tree-shaking | 维护状态 | 周下载量 | Stars |
+|---|---|---|---|---|---|---|---|---|
+| **Lodash** | 传统全能型 | ~24KB core / ~69KB full | 需额外安装 @types | 中等（兼容优先） | 支持（lodash-es） | 成熟但更新缓慢 | ~7400万 | ~61K |
+| **Ramda** | 函数式编程 | ~1.2MB | 类型推断差 | 中等 | 支持 | 活跃 | ~1080万 | ~24K |
+| **Radash** | 现代轻量工具库 | ~4.8KB gzipped | ✅ 原生支持 | 良好 | 优秀 | 原作者停止，社区接管中 | ~10万+ | ~4.8K |
+| **es-toolkit** | Lodash现代替代者 | 比Lodash小 **97%** | ✅ 内置100%覆盖 | **极快**（2-11x Lodash） | 开箱即用 | 非常活跃（Toss维护） | ~150万+ | ~20K+ |
+| **Radashi** | Radash社区分支 | 与Radash相近 | ✅ 改进的类型 | 良好 | 优秀 | 非常活跃（社区驱动） | 增长中 | ~2K+ |
+| **Remeda** | TS-first工具库 | ~2.8MB | ✅ 一流支持 | 中等（惰性求值） | 支持 | 活跃 | ~50万+ | ~5.4K |
+| **ModernDash** | TS-first Lodash替代 | 极小 | ✅ 严格模式无any | 超越Lodash | 优秀 | 活跃 | 较少 | ~500+ |
+| **Just** | 独立微型工具集 | 每个包独立极小 | ✅ 每个包有类型 | 原生级别 | 天然支持 | 活跃 | 各包不同 | ~3K |
+| **FxTS** | FP + 并发处理 | 中等 | ✅ 完全支持 | 高效（惰性求值） | 支持 | 活跃 | ~10万+ | ~1.2K |
+| **Rambda** | Ramda极速版 | 极小 | 有支持 | **极快** | 支持 | 活跃 | ~50万+ | ~2K |
+| **ts-belt** | ReScript风格FP | 小 | 优秀 | 极快 | 支持 | 活跃 | ~10万+ | ~1.2K |
+
+---
+
+## 🔍 各库详细优劣
+
+### 1. Lodash
+
+**优势：**
+- 功能最全面，覆盖几乎所有数据操作场景
+- 生态最成熟，文档丰富，社区庞大（周下载7400万+）
+- 兼容性最好，支持旧浏览器（IE11+）
+- 提供 `lodash/fp` 函数式编程版本
+
+**劣势：**
+- 包体积大，函数间存在隐式依赖，tree-shaking效果有限
+- 基于ES5语法，代码冗长，难以阅读源码
+- TypeScript类型需要额外安装 `@types/lodash`
+- 大量功能已被原生ES6+取代（map/filter/reduce等）
+- 维护更新缓慢，2026年仍有原型污染漏洞（CVE-2026-2950）
+- 性能在现代环境中已非最优
+
+---
+
+### 2. Ramda
+
+**优势：**
+- 纯函数式编程设计，自动柯里化
+- 数据后置（data-last）便于函数组合
+- 丰富的函数组合工具（compose, pipe, converge等）
+- 成熟的函数式编程生态，社区稳定
+
+**劣势：**
+- TypeScript类型推断差，类型支持被长期忽视
+- `pipe` 语法不自然：`pipe(fn1, fn2)(value)` 需额外调用
+- 学习曲线陡峭，需要函数式编程思维
+- 包体积较大（~1.2MB）
+- 性能在同类库中一般
+- 不适合不熟悉FP的团队快速上手
+
+---
+
+### 3. Radash
+
+**优势：**
+- 零依赖，包体积极小（~4.8KB gzipped，仅为Lodash的1/5）
+- 原生TypeScript编写，类型安全，类型守卫（type guards）真正可用
+- 去除过时函数（如原生已支持的map/filter），不重复造轮子
+- 异步工具优秀：`parallel`（并发控制）、`tryit`（错误处理）
+- 源代码极简（如 `range` 仅3行），可直接复制到项目中使用
+- 性能优于Lodash 
+
+**劣势：**
+- 原作者 Ray Epps 已停止维护，项目处于社区接管过渡期
+- 功能覆盖不如Lodash全面
+- 某些API与Lodash不兼容，迁移需适配
+- 社区相对较小，第三方资源有限
+
+---
+
+### 4. es-toolkit ⭐ 最推荐
+
+**优势：**
+- **性能极快**：平均比Lodash快2-3倍，`omit` 快11.8倍，`pick` 快3.43倍 
+- **包体积极小**：单个函数仅88-800字节，比Lodash小97% 
+- **完全兼容Lodash**：提供 `es-toolkit/compat` 层，可无缝替换
+- 内置TypeScript支持，100%测试覆盖率
+- Toss公司（韩国独角兽，类似支付宝）维护，资金有保障
+- 周下载量150万+，被Storybook、Recharts、CKEditor等使用 
+- 提供AI集成（Claude Code、Cursor、Copilot插件）
+
+**劣势：**
+- 相对较新（2024年发布），长期稳定性待观察
+- 某些边缘功能可能不如Lodash完善
+- 社区生态仍在建设中
+
+---
+
+### 5. Radashi
+
+**优势：**
+- Radash的活跃社区分支，持续迭代改进
+- 改进了Radash的类型定义和工具链（Vitest + Biome + PNPM）
+- 社区驱动，接受PR速度快，有自动发布流程（patch/beta/next）
+- 向后兼容Radash，迁移平滑
+- 提供JSR.io包支持，方便Deno用户 
+
+**劣势：**
+- 知名度较低，Stars仅~2K
+- 生态和文档不如es-toolkit完善
+- 作为分支项目，长期路线图不确定
+
+---
+
+### 6. Remeda
+
+**优势：**
+- 第一个同时支持 **data-first** 和 **data-last** 的TypeScript工具库
+- 一流的TypeScript支持，类型推断精准（如 `map` 可推断出tuple类型）
+- 惰性求值（lazy evaluation）提升大数据处理性能
+- 完全用TypeScript编写，类型即API
+- 支持CJS/ESM/Deno/JSR多平台 
+
+**劣势：**
+- 性能在同类库中偏慢（比Rambda/ts-belt慢）
+- 包体积较大（~2.8MB）
+- 惰性求值在管道中使用有时不够直观
+- 学习曲线比Lodash陡
+
+---
+
+### 7. ModernDash
+
+**优势：**
+- TypeScript严格模式，**无 `any` 类型**
+- 现代浏览器优化，性能超越Lodash
+- 100%测试覆盖率，零运行时依赖
+- 不重复原生JavaScript功能，保持精简 
+
+**劣势：**
+- 功能覆盖有限（只包含有价值的工具）
+- 社区很小，知名度低
+- 不支持旧版Node.js（要求&gt;=20.x）
+
+---
+
+### 8. Just
+
+**优势：**
+- 每个工具**独立成包**（如 `just-clone`、`just-debounce`），按需安装
+- 零依赖，每个包都极小（部分仅几十字节）
+- 支持ES5+浏览器
+- 每个包都有TypeScript定义 
+
+**劣势：**
+- 需要安装多个包才能满足需求，管理成本高
+- 没有统一的命名空间
+- 没有管道/链式调用支持
+- 不适合需要大量工具函数的项目
+
+---
+
+### 9. FxTS
+
+**优势：**
+- 惰性求值处理大数据/无限序列
+- 强大的**并发请求控制**（`concurrent` 函数）
+- 遵循Iterable/AsyncIterable标准协议
+- 支持管道和链式两种风格 
+
+**劣势：**
+- 专注函数式编程场景，通用工具较少
+- 学习曲线较陡
+- 不适合只需要简单工具函数的场景
+
+---
+
+### 10. Rambda
+
+**优势：**
+- **极快的性能**（最难被超越）
+- 包体积极小
+- Ramda API兼容
+
+**劣势：**
+- 功能覆盖不如Ramda全面
+- TypeScript支持仍有改进空间
+- 社区较小
+
+---
+
+### 11. ts-belt
+
+**优势：**
+- ReScript风格API，类型安全
+- 性能极快（比Remeda/Ramda快）
+- data-first设计更直观 
+
+**劣势：**
+- ReScript风格可能不适合所有开发者
+- 社区较小，文档相对有限
+
+---
+
+## 🎯 选型建议
+
+| 场景 | 推荐库 | 理由 |
+|---|---|---|
+| **从Lodash迁移** | **es-toolkit** | API兼容，改一行import即可，性能提升2-11倍 |
+| **全新TypeScript项目** | **es-toolkit** 或 **Radashi** | 现代、高性能、类型安全、社区活跃 |
+| **函数式编程项目** | **Ramda** 或 **FxTS** | FP范式支持完善，函数组合能力强 |
+| **需要惰性求值** | **Remeda** 或 **FxTS** | 内置lazy evaluation，大数据友好 |
+| **对包大小极度敏感** | **Just** 或 **es-toolkit** | 按需加载或极小体积 |
+| **遗留项目维护** | **Lodash** | 兼容性最好，文档最全，风险最低 |
+| **需要并发控制** | **FxTS** | 内置concurrent控制，异步管道优秀 |
+| **喜欢Ramda但嫌慢** | **Rambda** | 相同API，极致速度 |
+| **ReScript风格偏好** | **ts-belt** | 类型安全+高性能 |
+| **现代浏览器only** | **ModernDash** | 专为现代环境优化，严格TS |
+
+---
+
+## 📈 趋势观察
+
+1. **Lodash正在衰退**：虽然仍是下载量之王，但越来越多的项目开始迁移到现代替代方案，2025年已有文章建议'告别Lodash' 
+2. **es-toolkit崛起最快**：由Toss公司背书，API兼容+极致性能，是2025-2026年最热门的Lodash替代者，已发起与Lodash社区的协作迁移倡议 
+3. **TypeScript-first成为标配**：新库都原生支持TypeScript，Lodash的后装类型模式已过时
+4. **函数式编程库分化**：Ramda保持经典，Remeda/ts-belt/Rambda在TypeScript+性能方向竞争
+5. **社区驱动模式**：Radashi证明社区可以成功接管并改进项目，成为可持续的维护模式
+
+---
+
+## 推荐2
+
+### 一、 五大主流工具库深度对比
+
+#### 1. Lodash
+*   **简介**：诞生于 ES5 时代，前端工具库的“瑞士军刀”，拥有最庞大的生态。</description><guid isPermaLink="true">https://zy1acg.github.io/post/js%20-shi-yong-han-shu-ku.html</guid><pubDate>Wed, 24 Jun 2026 05:17:22 +0000</pubDate></item><item><title>js 工具库</title><link>https://zy1acg.github.io/post/js%20-gong-ju-ku.html</link><description>## Time
 
 ### 📦 Day.js
 
