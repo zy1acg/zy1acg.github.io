@@ -45,3 +45,9 @@ console.log((0.1).add(0.2))
   - 公式为:minValue+Math.floor(Math.random()*(maxValue -minValue))
 - 取 minValue~maxValue 的随机数（包括 maxValu）
   - 公式为:minValue+Math.floor(Math.random()*(maxValue -minValue + 1))
+
+## 展开语法
+- 将类数组对象转为真正的数组
+- 替代concat，合并数组
+- 替代arguments，接受任意数量的函数参数，也可以用于接收部分参数
+- 
