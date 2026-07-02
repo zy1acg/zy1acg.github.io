@@ -269,7 +269,63 @@ git merge [拉取的分支（被合并）] <span class="pl-c"><span class="pl-c"
 
 git config --global merge.ff <span class="pl-c1">false</span>
 
-git reset --hard HEAD~1 <span class="pl-c"><span class="pl-c">#</span> 回退HEAD指针，撤销回退</span></pre></div></div>
+git reset --hard HEAD~1 <span class="pl-c"><span class="pl-c">#</span> 回退HEAD指针，撤销回退</span></pre></div>
+<h3>git 常用命令</h3>
+<ul>
+<li>查看分支 git branch</li>
+<li>新建分支 git branch dev</li>
+<li>切换分支 git checkout dev</li>
+<li>新建并切换分支 git checkout -b testing</li>
+<li>合并分支-提交测试 git merge dev</li>
+<li>基于主分支创建新分支 git checkout feature/login
+<ul>
+<li>主分支代码更新版本</li>
+<li>合并feature/login 分支到主分支，发生冲突 git merge feature/login</li>
+<li>终止合并 git merge --abort</li>
+<li>在开发分支手动处理冲突</li>
+<li>再次合并到主分支完成上线</li>
+</ul>
+</li>
+<li>轻量标签 git tag v1.0.0</li>
+<li>带备注正式标签（推荐）git tag -a v1.0.0 -m "正式版 v1.0.0 上线"</li>
+<li>查看所有标签 git tag</li>
+<li>查看标签详情 git show v1.0.0</li>
+<li>推送单个标签到远程 git push origin v1.0.0</li>
+<li>推送全部标签 git push origin --tags</li>
+<li>查看远程标签 git ls-remote --tag origin</li>
+<li>基于标签版本修复bug流程 git checkout -b hotfix/v1.0-fix v1.0.0</li>
+<li>在开发过程中，需要紧急修复bug的处理过程
+<ul>
+<li>git stash</li>
+<li>git stash list</li>
+<li>git stash pop</li>
+</ul>
+</li>
+<li>git alias 别名的使用
+<ul>
+<li>系统级别名设置 alias 命令</li>
+<li>快速查看状态 git config --global alias.s "status"</li>
+<li>简洁树形日志 git config --global alias.lg "log --oneline --graph --all"</li>
+<li>快速提交 git config --global alias.c "commit -m"</li>
+<li>查看已设置别名 git config --get-regexp alias</li>
+</ul>
+</li>
+<li>系统级别名设置 alias 命令</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre class="notranslate">vim <span class="pl-k">~</span>/.bashrc
+
+<span class="pl-c1">alias</span> gitadd=<span class="pl-s"><span class="pl-pds">"</span>git add<span class="pl-pds">"</span></span>
+<span class="pl-c1">alias</span> gitstatus=<span class="pl-s"><span class="pl-pds">"</span>git status<span class="pl-pds">"</span></span>
+<span class="pl-c1">alias</span> gitcommit=<span class="pl-s"><span class="pl-pds">"</span>git commit -m <span class="pl-pds">"</span></span>
+<span class="pl-c1">alias</span> gitbranch=<span class="pl-s"><span class="pl-pds">"</span>git branch<span class="pl-pds">"</span></span>
+
+<span class="pl-c1">source</span> <span class="pl-k">~</span>/.bashrc
+
+<span class="pl-c1">alias</span> <span class="pl-k">|</span> grep git</pre></div>
+<ul>
+<li>其他<br>
+type gitadd</li>
+</ul></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>

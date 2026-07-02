@@ -102,3 +102,49 @@ git config --global merge.ff false
 
 git reset --hard HEAD~1 # 回退HEAD指针，撤销回退
 ``` 
+
+### git 常用命令
+- 查看分支 git branch 
+- 新建分支 git branch dev
+- 切换分支 git checkout dev
+- 新建并切换分支 git checkout -b testing
+- 合并分支-提交测试 git merge dev
+- 基于主分支创建新分支 git checkout feature/login
+  - 主分支代码更新版本 
+  - 合并feature/login 分支到主分支，发生冲突 git merge feature/login
+  - 终止合并 git merge --abort
+  - 在开发分支手动处理冲突
+  - 再次合并到主分支完成上线
+- 轻量标签 git tag v1.0.0
+- 带备注正式标签（推荐）git tag -a v1.0.0 -m "正式版 v1.0.0 上线"
+- 查看所有标签 git tag
+- 查看标签详情 git show v1.0.0
+- 推送单个标签到远程 git push origin v1.0.0
+- 推送全部标签 git push origin --tags
+- 查看远程标签 git ls-remote --tag origin
+- 基于标签版本修复bug流程 git checkout -b hotfix/v1.0-fix v1.0.0
+- 在开发过程中，需要紧急修复bug的处理过程
+  - git stash
+  - git stash list
+  - git stash pop
+- git alias 别名的使用 
+  - 系统级别名设置 alias 命令
+  - 快速查看状态 git config --global alias.s "status"
+  - 简洁树形日志 git config --global alias.lg "log --oneline --graph --all"
+  - 快速提交 git config --global alias.c "commit -m"
+  - 查看已设置别名 git config --get-regexp alias
+- 系统级别名设置 alias 命令
+```bash 
+vim ~/.bashrc
+
+alias gitadd="git add"
+alias gitstatus="git status"
+alias gitcommit="git commit -m "
+alias gitbranch="git branch"
+
+source ~/.bashrc
+
+alias | grep git
+```
+- 其他
+   type gitadd
