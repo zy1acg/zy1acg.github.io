@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark_colorblind" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>
+    <link rel="icon" href="https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="一句话概括：**`Set` 是“不重复的值集合”，`Map` 是“键可以是任意类型的键值对字典”。">
+<meta property="og:title" content="js set&nap">
+<meta property="og:description" content="一句话概括：**`Set` 是“不重复的值集合”，`Map` 是“键可以是任意类型的键值对字典”。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zy1acg.github.io/post/js%20set%26nap.html">
+<meta property="og:image" content="https://cdn.jsdu.cn/opdav/20260516/62ab4fc20dc571efd9cbe6a6f57d639a.jpg">
+<title>js set&nap</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">js set&nap</h1>
+<div class="title-right">
+    <a href="https://zy1acg.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/zy1acg/zy1acg.github.io/issues/19" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>一句话概括：<strong><code class="notranslate">Set</code> 是“不重复的值集合”，<code class="notranslate">Map</code> 是“键可以是任意类型的键值对字典”。</strong></p>
+<hr>
+<h3>一、 相同点</h3>
+<ol>
+<li><strong>都是 ES6 新增的集合类型</strong>：专门用于存储和操作数据集合。</li>
+<li><strong>都是可迭代的（Iterable）</strong>：都支持 <code class="notranslate">for...of</code> 循环、扩展运算符 <code class="notranslate">...</code> 以及 <code class="notranslate">Array.from()</code>。</li>
+<li><strong>保持插入顺序</strong>：遍历时的顺序就是元素添加时的顺序。</li>
+<li><strong>都有 <code class="notranslate">size</code> 属性</strong>：可以直接通过 <code class="notranslate">.size</code> 获取元素个数（不需要像数组用 <code class="notranslate">.length</code>，对象则需要 <code class="notranslate">Object.keys().length</code>）。</li>
+<li><strong>共有部分方法</strong>：都有 <code class="notranslate">has()</code>、<code class="notranslate">delete()</code>、<code class="notranslate">clear()</code> 方法。</li>
+<li><strong>底层比较算法相同</strong>：都使用 <strong>Same-value-zero equality</strong> 算法。它类似于严格相等 <code class="notranslate">===</code>，但有两个关键区别：
+<ul>
+<li><code class="notranslate">NaN</code> 等于 <code class="notranslate">NaN</code>（在 <code class="notranslate">===</code> 中 <code class="notranslate">NaN !== NaN</code>）。</li>
+<li><code class="notranslate">+0</code> 等于 <code class="notranslate">-0</code>。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>二、 核心区别</h3>
+<p>表格</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>维度</th>
+<th><code class="notranslate">Set</code>(集合)</th>
+<th><code class="notranslate">Map</code>(字典/映射)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>存储结构</strong></td>
+<td><strong>单列值</strong>（只有 value）</td>
+<td><strong>键值对</strong>（key - value）</td>
+</tr>
+<tr>
+<td><strong>唯一性约束</strong></td>
+<td><strong>值</strong>必须唯一，重复添加会被忽略</td>
+<td><strong>键</strong>必须唯一，重复设置会覆盖旧值</td>
+</tr>
+<tr>
+<td><strong>添加元素 API</strong></td>
+<td><code class="notranslate">.add(value)</code></td>
+<td><code class="notranslate">.set(key, value)</code></td>
+</tr>
+<tr>
+<td><strong>获取元素 API</strong></td>
+<td>无直接获取方法（因为值就是键）</td>
+<td><code class="notranslate">.get(key)</code></td>
+</tr>
+<tr>
+<td><strong>键的类型限制</strong></td>
+<td>没有键的概念</td>
+<td><strong>任意类型</strong>（对象、函数、NaN、基本类型均可）</td>
+</tr>
+<tr>
+<td><strong>默认迭代器</strong></td>
+<td><code class="notranslate">values()</code></td>
+<td><code class="notranslate">entries()</code> (返回 <code class="notranslate">[key, value]</code>)</td>
+</tr>
+<tr>
+<td><strong>与 Object 对比</strong></td>
+<td>类似去重后的数组</td>
+<td>类似 Object，但键不限于字符串/Symbol</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h4>代码直观对比：</h4>
+<p>javascript</p>
+<p>编辑</p>
+<pre class="notranslate"><code class="notranslate">// --- Set ---
+const mySet = new Set();
+mySet.add(1);
+mySet.add("1");   // 严格区分类型，"1" 和 1 是不同的值
+mySet.add(NaN);
+mySet.add(NaN);   // NaN 被认为是相同的，不会重复添加
+console.log(mySet.size); // 3
+
+// --- Map ---
+const myMap = new Map();
+const objKey = { id: 1 };
+
+myMap.set("name", "张三");     // 字符串作键
+myMap.set(objKey, "对象键");   // 对象作键 (普通 Object 做不到)
+myMap.set(NaN, "我是NaN");     // NaN 作键
+
+console.log(myMap.get(objKey)); // "对象键"
+console.log(myMap.size);        // 3
+</code></pre>
+<hr>
+<h3>三、 使用注意事项（<g-emoji class="g-emoji" alias="warning">⚠️</g-emoji> 避坑指南）</h3>
+<h4>1. 引用类型的“地址”比较陷阱（最常见错误）</h4>
+<p><code class="notranslate">Set</code> 去重和 <code class="notranslate">Map</code> 判断键是否存在时，对于<strong>对象/数组等引用类型</strong>，比较的是<strong>内存地址</strong>，而不是内容。</p>
+<p>javascript</p>
+<p>编辑</p>
+<pre class="notranslate"><code class="notranslate">const set = new Set();
+set.add({ name: "张三" });
+set.add({ name: "张三" }); 
+console.log(set.size); // 2！因为这是两个不同的对象，内存地址不同
+
+const map = new Map();
+map.set({ id: 1 }, "A");
+console.log(map.get({ id: 1 })); // undefined！因为 {id:1} 是一个新对象，地址不同
+</code></pre>
+<p><strong>解决思路</strong>：如果需要根据对象内容去重或查找，应将其序列化为字符串（如 <code class="notranslate">JSON.stringify</code>）作为键，或提取唯一标识符（如 <code class="notranslate">id</code>）作为键。</p>
+<h4>2. Map 的键是“绑定”到对象引用的</h4>
+<p>如果使用对象作为 <code class="notranslate">Map</code> 的键，只要这个 <code class="notranslate">Map</code> 存在，该对象就不会被垃圾回收（即使外部已经没有变量引用它了），这<strong>极易引发内存泄漏</strong>。</p>
+<p>javascript</p>
+<p>编辑</p>
+<pre class="notranslate"><code class="notranslate">let map = new Map();
+let domNode = document.getElementById('app');
+map.set(domNode, '一些数据');
+
+// 假设后来页面上 #app 节点被删除了
+// domNode = null; 
+// 只要 map 还在，这个 domNode 的内存就永远不会被释放！
+</code></pre>
+<p><strong>解决思路</strong>：如果键是 DOM 节点或对象，且希望外部销毁时自动释放内存，请使用 <strong><code class="notranslate">WeakMap</code></strong>。</p>
+<h4>3. JSON 序列化问题</h4>
+<p><code class="notranslate">Set</code> 和 <code class="notranslate">Map</code> <strong>不能直接通过 <code class="notranslate">JSON.stringify()</code> 正确转换</strong>。</p>
+<p>javascript</p>
+<p>编辑</p>
+<pre class="notranslate"><code class="notranslate">const set = new Set([1, 2, 3]);
+const map = new Map([['a', 1]]);
+
+JSON.stringify(set); // "{}" (空对象)
+JSON.stringify(map); // "{}" (空对象)
+</code></pre>
+<p><strong>解决思路</strong>：在序列化前，先转换为数组。</p>
+<p>javascript</p>
+<p>编辑</p>
+<pre class="notranslate"><code class="notranslate">JSON.stringify([...set]);            // "[1,2,3]"
+JSON.stringify(Array.from(map));     // '[["a",1]]'
+// 或者使用 replacer 函数自定义序列化逻辑
+</code></pre>
+<h4>4. 不要用 <code class="notranslate">forEach</code> 中的 <code class="notranslate">break</code></h4>
+<p><code class="notranslate">Set</code> 和 <code class="notranslate">Map</code> 的 <code class="notranslate">.forEach()</code> 方法<strong>无法使用 <code class="notranslate">break</code> 或 <code class="notranslate">return</code> 提前终止循环</strong>（和数组的 <code class="notranslate">forEach</code> 一样）。如果需要提前终止遍历，请使用 <code class="notranslate">for...of</code>。</p>
+<p>javascript</p>
+<p>编辑</p>
+<pre class="notranslate"><code class="notranslate">for (const [key, value] of myMap) {
+  if (key === 'target') break; // 可以正常 break
+}
+</code></pre>
+<h4>5. 性能考量</h4>
+<ul>
+<li><strong>频繁增删</strong>：在需要频繁添加、删除元素的场景下，<code class="notranslate">Set</code> 和 <code class="notranslate">Map</code> 的性能通常优于 <code class="notranslate">Array</code> 和 <code class="notranslate">Object</code>。</li>
+<li><strong>内存占用</strong>：<code class="notranslate">Set</code> 和 <code class="notranslate">Map</code> 的底层实现比简单的数组/对象复杂，因此在存储少量数据时，内存占用可能会略高。</li>
+</ul>
+<hr>
+<h3>四、 典型应用场景总结</h3>
+<p>表格</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐数据结构</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>数组去重</strong></td>
+<td><code class="notranslate">Set</code></td>
+<td><code class="notranslate">[...new Set(arr)]</code></td>
+</tr>
+<tr>
+<td><strong>交集/并集/差集</strong></td>
+<td><code class="notranslate">Set</code></td>
+<td>利用 <code class="notranslate">filter</code> 和 <code class="notranslate">has</code> 实现集合运算</td>
+</tr>
+<tr>
+<td><strong>保存唯一回调函数列表</strong></td>
+<td><code class="notranslate">Set</code></td>
+<td>事件总线（EventBus）中防止重复注册同一个回调</td>
+</tr>
+<tr>
+<td><strong>用对象/DOM节点做键</strong></td>
+<td><code class="notranslate">Map</code></td>
+<td>给 DOM 节点绑定私有数据，不污染 DOM 属性</td>
+</tr>
+<tr>
+<td><strong>缓存计算结果</strong></td>
+<td><code class="notranslate">Map</code></td>
+<td>以参数为 key，结果为 value，实现 Memoize（记忆化）</td>
+</tr>
+<tr>
+<td><strong>保持键的插入顺序</strong></td>
+<td><code class="notranslate">Map</code></td>
+<td>普通 Object 在早期 JS 中不保证顺序，Map 严格保证</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h3>补充：什么时候用 <code class="notranslate">WeakSet</code> / <code class="notranslate">WeakMap</code>？</h3>
+<p>当你需要以<strong>对象</strong>作为 <code class="notranslate">Set</code> 的值或 <code class="notranslate">Map</code> 的键，且<strong>不希望阻止垃圾回收</strong>时，使用 <code class="notranslate">Weak</code> 系列：</p>
+<ul>
+<li><strong><code class="notranslate">WeakSet</code></strong>：只能存对象。适合记录“某个对象是否被处理过”（如标记已遍历的节点），对象销毁时自动从 WeakSet 消失。</li>
+<li><strong><code class="notranslate">WeakMap</code></strong>：键只能是对象。适合给对象附加“私有数据”或缓存。当对象被销毁时，对应的键值对自动消失，不会内存泄漏。</li>
+</ul>
+<p>javascript</p>
+<p>编辑</p>
+<pre class="notranslate"><code class="notranslate">// WeakMap 经典应用：给 DOM 节点存数据
+const wm = new WeakMap();
+const btn = document.querySelector('#btn');
+wm.set(btn, { clickCount: 0 });
+
+btn.addEventListener('click', () =&gt; {
+  let data = wm.get(btn);
+  data.clickCount++;
+});
+// 当 btn 从页面移除且无其他引用时，wm 里的数据会被自动垃圾回收。
+</code></pre>
+<p>在 JavaScript 中，<code class="notranslate">Set</code> 和 <code class="notranslate">Map</code> 是 ES6 引入的两种全新数据结构，用于弥补传统 <code class="notranslate">Array</code> 和 <code class="notranslate">Object</code> 在特定场景下的不足。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://zy1acg.github.io">Z's Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","zy1acg/zy1acg.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>
+
+</html>
